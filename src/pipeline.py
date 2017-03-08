@@ -170,28 +170,28 @@ def make_pipeline(state):
         filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).merged.bam'),
         output='variants/{sample[0]}.g.vcf')
 
-    # Combine G.VCF files for all samples using GATK
-    pipeline.merge(
-        task_func=stages.combine_gvcf_gatk,
-        name='combine_gvcf_gatk',
-        input=output_from('call_haplotypecaller_gatk'),
-        output='variants/ALL.combined.vcf')
-
-    # Genotype G.VCF files using GATK
-    pipeline.transform(
-        task_func=stages.genotype_gvcf_gatk,
-        name='genotype_gvcf_gatk',
-        input=output_from('combine_gvcf_gatk'),
-        filter=suffix('.combined.vcf'),
-        output='.raw.vcf')
-
-    # SNP recalibration using GATK
-    pipeline.transform(
-        task_func=stages.snp_recalibrate_gatk,
-        name='snp_recalibrate_gatk',
-        input=output_from('genotype_gvcf_gatk'),
-        filter=suffix('.raw.vcf'),
-        output=['.snp_recal', '.snp_tranches', '.snp_plots.R'])
+    # # Combine G.VCF files for all samples using GATK
+    # pipeline.merge(
+    #     task_func=stages.combine_gvcf_gatk,
+    #     name='combine_gvcf_gatk',
+    #     input=output_from('call_haplotypecaller_gatk'),
+    #     output='variants/ALL.combined.vcf')
+    #
+    # # Genotype G.VCF files using GATK
+    # pipeline.transform(
+    #     task_func=stages.genotype_gvcf_gatk,
+    #     name='genotype_gvcf_gatk',
+    #     input=output_from('combine_gvcf_gatk'),
+    #     filter=suffix('.combined.vcf'),
+    #     output='.raw.vcf')
+    #
+    # # SNP recalibration using GATK
+    # pipeline.transform(
+    #     task_func=stages.snp_recalibrate_gatk,
+    #     name='snp_recalibrate_gatk',
+    #     input=output_from('genotype_gvcf_gatk'),
+    #     filter=suffix('.raw.vcf'),
+    #     output=['.snp_recal', '.snp_tranches', '.snp_plots.R'])
 
     # Apply SNP recalibration using GATK
     (pipeline.transform(
