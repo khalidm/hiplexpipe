@@ -9,7 +9,7 @@ from stages import Stages
 def make_pipeline(state):
     '''Build the pipeline by constructing stages and connecting them together'''
     # Build an empty pipeline
-    pipeline = Pipeline(name='thepipeline')
+    pipeline = Pipeline(name='hiplexpipe')
     # Get a list of paths to all the FASTQ files
     fastq_files = state.config.get_option('fastqs')
     # Stages are dependent on the state
@@ -32,23 +32,24 @@ def make_pipeline(state):
         # This will be the first input to the stage.
         # We assume the sample name may consist of only alphanumeric
         # characters.
-        # filter=formatter('(?P<path>.+)/(?P<readid>[a-zA-Z0-9-\.]+)_(?P<lib>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_(?P<sample>[a-zA-Z0-9]+)_1.fastq.gz'),
-        # 1_HFYLVCCXX:2:TCCGCGAA_2_GE0343_1.fastq.gz
-        # 1_HCJWFBCXX:GGACTCCT_L001_9071584415739518822-AGRF-023_R2.fastq.gz
+        # filter=formatter('(?P<path>.+)/
+        # (?P<readid>[a-zA-Z0-9-\.]+)_(?P<lib>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_(?P<sample>[a-zA-Z0-9]+)_1.fastq.gz'),
+        # 00-002-0640_S192_L001_R1_001.fastq
+
         filter=formatter(
-            '.+/(?P<readid>[a-zA-Z0-9-]+)_(?P<lib>[a-zA-Z0-9-:]+)_(?P<lane>[a-zA-Z0-9]+)_(?P<sample>[a-zA-Z0-9-]+)_R1.fastq.gz'),
+            '.+/(?P<readid>[a-zA-Z0-9-]+)_(?P<sample>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq.gz'),
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # e.g. C2WPF.5_Solexa-201237_5_X4311_1.fastq.gz
         add_inputs=add_inputs(
-            '{path[0]}/{readid[0]}_{lib[0]}_{lane[0]}_{sample[0]}_R2.fastq.gz'),
+            '{path[0]}/{readid[0]}_{sample[0]}_{lane[0]}_R2_{lib[0]}.fastq.gz'),
         # Add an "extra" argument to the state (beyond the inputs and outputs)
         # which is the sample name. This is needed within the stage for finding out
         # sample specific configuration options
         extras=['{readid[0]}', '{lib[0]}', '{lane[0]}', '{sample[0]}'],
         # extras=['{sample[0]}'],
         # The output file name is the sample name with a .bam extension.
-        output='alignments/{sample[0]}/{readid[0]}_{lib[0]}_{lane[0]}_{sample[0]}.bam')
+        output='alignments/{sample[0]}/{sample[0]}.bam')
 
     # Sort the BAM file using Picard
     pipeline.transform(
@@ -58,22 +59,22 @@ def make_pipeline(state):
         filter=suffix('.bam'),
         output='.sort.bam')
 
-    # Mark duplicates in the BAM file using Picard
-    pipeline.transform(
-        task_func=stages.mark_duplicates_picard,
-        name='mark_duplicates_picard',
-        input=output_from('sort_bam_picard'),
-        filter=suffix('.sort.bam'),
-        # XXX should make metricsup an extra output?
-        output=['.sort.dedup.bam', '.metricsdup'])
+    # # Mark duplicates in the BAM file using Picard
+    # pipeline.transform(
+    #     task_func=stages.mark_duplicates_picard,
+    #     name='mark_duplicates_picard',
+    #     input=output_from('sort_bam_picard'),
+    #     filter=suffix('.sort.bam'),
+    #     # XXX should make metricsup an extra output?
+    #     output=['.sort.dedup.bam', '.metricsdup'])
 
     # Local realignment using GATK
     # Generate RealignerTargetCreator using GATK
     pipeline.transform(
         task_func=stages.realigner_target_creator,
         name='realigner_target_creator',
-        input=output_from('mark_duplicates_picard'),
-        filter=suffix('.sort.dedup.bam'),
+        input=output_from('sort_bam_picard'),
+        filter=suffix('.sort.bam'),
         output='.intervals')
 
     # Local realignment using GATK
