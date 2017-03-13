@@ -60,12 +60,11 @@ def make_pipeline(state):
         output='.sort.bam')
 
     # Apply samtools
-    (pipeline.merge(
+    (pipeline.collate(
         task_func=stages.apply_samtools_mpileup,
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='all.bcf')
         .follows('sort_bam_picard'))
 
