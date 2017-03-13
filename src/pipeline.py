@@ -35,6 +35,7 @@ def make_pipeline(state):
         # filter=formatter('(?P<path>.+)/
         # (?P<readid>[a-zA-Z0-9-\.]+)_(?P<lib>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_(?P<sample>[a-zA-Z0-9]+)_1.fastq.gz'),
         # 00-002-0640_S192_L001_R1_001.fastq
+        # OHI031002-P02F04_S318_L001_R1_001.fastq
 
         filter=formatter(
             '.+/(?P<readid>[a-zA-Z0-9-]+)_(?P<sample>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq.gz'),
@@ -46,7 +47,7 @@ def make_pipeline(state):
         # Add an "extra" argument to the state (beyond the inputs and outputs)
         # which is the sample name. This is needed within the stage for finding out
         # sample specific configuration options
-        extras=['{readid[0]}', '{lib[0]}', '{lane[0]}', '{sample[0]}'],
+        extras=['{readid[0]}', '{sample[0]}', '{lane[0]}', '{lib[0]}'],
         # extras=['{sample[0]}'],
         # The output file name is the sample name with a .bam extension.
         output='alignments/{sample[0]}/{sample[0]}.bam')
