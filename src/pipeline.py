@@ -66,7 +66,7 @@ def make_pipeline(state):
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.bcf')
+        output='all.bcf')
         .follows('sort_bam_picard'))
 
     # Apply bcftools
