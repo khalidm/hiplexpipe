@@ -90,6 +90,22 @@ class Stages(object):
                           bam=bam_out)
         run_stage(self.state, 'align_bwa', command)
 
+    def undr_rover(self, inputs, bam_out, read_id, lib, lane, sample_id):
+        # def align_bwa(self, inputs, bam_out, sample_id):
+        '''Align the paired end fastq files to the reference genome using bwa'''
+        fastq_read1_in, fastq_read2_in = inputs
+        cores = self.get_stage_options('align_bwa', 'cores')
+        safe_make_dir('alignments/{sample}'.format(sample=sample_id))
+        read_group = '"@RG\\tID:{readid}\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+            .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
+        command = 'undr_rover --primer_coords example_coords.txt ' \
+                  '--primer_sequences example_primers.txt '\
+                  '--reference reference.fasta '\
+                  '--out example.vcf '\
+                  '--genotype '\
+                  'example_R1.fastq example_R2.fastq'
+        run_stage(self.state, 'undr_rover', command)
+
     def sort_bam_picard(self, bam_in, sorted_bam_out):
         '''Sort the BAM file using Picard'''
         picard_args = 'SortSam INPUT={bam_in} OUTPUT={sorted_bam_out} ' \

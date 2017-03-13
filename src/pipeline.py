@@ -52,6 +52,35 @@ def make_pipeline(state):
         # The output file name is the sample name with a .bam extension.
         output='alignments/{sample[0]}/{sample[0]}.bam')
 
+    # Call variants using undr_rover
+    # pipeline.transform(
+    #     task_func=stages.undr_rover,
+    #     name='undr_rover',
+    #     input=output_from('original_fastqs'),
+    #     # Match the R1 (read 1) FASTQ file and grab the path and sample name.
+    #     # This will be the first input to the stage.
+    #     # We assume the sample name may consist of only alphanumeric
+    #     # characters.
+    #     # filter=formatter('(?P<path>.+)/
+    #     # (?P<readid>[a-zA-Z0-9-\.]+)_(?P<lib>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_(?P<sample>[a-zA-Z0-9]+)_1.fastq.gz'),
+    #     # 00-002-0640_S192_L001_R1_001.fastq
+    #     # OHI031002-P02F04_S318_L001_R1_001.fastq
+    #
+    #     filter=formatter(
+    #         '.+/(?P<readid>[a-zA-Z0-9-]+)_(?P<sample>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
+    #     # Add one more inputs to the stage:
+    #     #    1. The corresponding R2 FASTQ file
+    #     # e.g. C2WPF.5_Solexa-201237_5_X4311_1.fastq.gz
+    #     add_inputs=add_inputs(
+    #         '{path[0]}/{readid[0]}_{sample[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
+    #     # Add an "extra" argument to the state (beyond the inputs and outputs)
+    #     # which is the sample name. This is needed within the stage for finding out
+    #     # sample specific configuration options
+    #     extras=['{readid[0]}', '{sample[0]}', '{lane[0]}', '{lib[0]}'],
+    #     # extras=['{sample[0]}'],
+    #     # The output file name is the sample name with a .bam extension.
+    #     output='undr_rover/{sample[0]}.vcf')
+
     # Sort the BAM file using Picard
     pipeline.transform(
         task_func=stages.sort_bam_picard,
@@ -61,15 +90,16 @@ def make_pipeline(state):
         output='.sort.bam')
 
     # Apply samtools
-    pipeline.transform(
+    (pipeline.transform(
         task_func=stages.apply_samtools_mpileup,
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
-        filter=suffix('.sort.bam'),
+        #filter=suffix('.sort.bam'),
         output='all.bcf')
         #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+        filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
         #output='variants/all.bcf')
-        # .follows('sort_bam_picard'))
+        .follows('sort_bam_picard'))
 
     # Apply bcftools
     (pipeline.transform(
