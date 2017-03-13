@@ -70,7 +70,7 @@ def make_pipeline(state):
 
     # Apply bcftools
     (pipeline.transform(
-        task_func=stages.apply_samtools_mpileup,
+        task_func=stages.apply_bcftools,
         name='apply_bcftools',
         input=output_from('apply_samtools_mpileup'),
         filter=suffix('.bcf'),
