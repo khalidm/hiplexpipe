@@ -66,7 +66,7 @@ def make_pipeline(state):
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
-        output='all.bcf')
+        output='all.bcf'))
         # .follows('sort_bam_picard'))
 
     # Apply bcftools
