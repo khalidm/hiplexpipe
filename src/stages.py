@@ -101,15 +101,17 @@ class Stages(object):
     #samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
         '''Samtools mpileup'''
-        bam_in = bam_in
-        command = 'samtools mpileup -go {mpileup_out_bcf} -f {reference} {bam_in}'.format(
-                          mpileup_out_bcf=mpileup_out_bcf,reference=self.reference,bam_in=bam_in)
+        # bam_in = bam_in
+        bams = ' '.join([bam for bam in bam_in])
+        command = 'samtools mpileup -go {mpileup_out_bcf} -f {reference} {bams}'.format(
+                          mpileup_out_bcf=mpileup_out_bcf,reference=self.reference,bams=bams)
         run_stage(self.state, 'apply_samtools_mpileup', command)
 
     #bcftools
     def apply_bcftools(self, mpileup_in, vcf_out):
         '''Bcftools call variants'''
         mpileup_in = mpileup_in
+        # mpileup_in = ' '.join([vcf for vcf in vcf_files_in])
         picard_args = 'bcftools call -vmO z -o {vcf_out} {mpileup_in}'.format(
                           vcf_out=vcf_out,mpileup_in=mpileup_in)
         run_stage(self.state, 'apply_bcftools', command)
