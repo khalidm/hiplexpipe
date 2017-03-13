@@ -59,14 +59,34 @@ def make_pipeline(state):
         filter=suffix('.bam'),
         output='.sort.bam')
 
+    # Apply samtools
+    (pipeline.merge(
+        task_func=stages.apply_samtools_mpileup,
+        name='apply_samtools_mpileup',
+        input=output_from('sort_bam_picard'),
+        filter=suffix('.sort.bam'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.bcf')
+        .follows('sort_bam_picard'))
+
+    # Apply bcftools
+    (pipeline.merge(
+        task_func=stages.apply_samtools_mpileup,
+        name='apply_bcftools',
+        input=output_from('apply_samtools_mpileup'),
+        filter=suffix('.bcf'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.raw.vcf')
+        .follows('apply_samtools_mpileup'))
+
     # Apply NORM
     (pipeline.transform(
         task_func=stages.apply_vt,
         name='apply_vt',
-        input=output_from('apply_indel_recalibrate_gatk'),
-        filter=suffix('.raw.vqsr.vcf'),
+        input=output_from('apply_bcftools'),
+        filter=suffix('.raw.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vqsr.vt.vcf')
+        output='.raw.vt.vcf')
         .follows('sort_bam_picard'))
 
     # Apply VEP
@@ -76,7 +96,7 @@ def make_pipeline(state):
         input=output_from('apply_vt'),
         filter=suffix('.sort.bam'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vqsr.vt.vep.vcf')
+        output='.raw.vt.vep.vcf')
         .follows('apply_vt'))
 
     # Apply BCF
@@ -86,7 +106,7 @@ def make_pipeline(state):
         input=output_from('apply_vep'),
         filter=suffix('.raw.vqsr.vt.vep.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vqsr.vt.vep.bcf.vcf')
+        output='.raw.vt.vep.bcf.vcf')
         .follows('apply_vep'))
 
     # Apply SnpEff
