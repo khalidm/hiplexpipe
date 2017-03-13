@@ -51,7 +51,6 @@ def make_pipeline(state):
         # extras=['{sample[0]}'],
         # The output file name is the sample name with a .bam extension.
         output='alignments/{sample[0]}/{sample[0]}.bam')
-    exit
 
     # Sort the BAM file using Picard
     pipeline.transform(
@@ -62,13 +61,13 @@ def make_pipeline(state):
         output='.sort.bam')
 
     # Apply samtools
-    (pipeline.merge(
+    (pipeline.collate(
         task_func=stages.apply_samtools_mpileup,
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
         output='all.bcf')
-        .follows('sort_bam_picard'))
+        # .follows('sort_bam_picard'))
 
     # Apply bcftools
     (pipeline.transform(
