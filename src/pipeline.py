@@ -51,6 +51,7 @@ def make_pipeline(state):
         # extras=['{sample[0]}'],
         # The output file name is the sample name with a .bam extension.
         output='alignments/{sample[0]}/{sample[0]}.bam')
+    exit
 
     # Sort the BAM file using Picard
     pipeline.transform(
