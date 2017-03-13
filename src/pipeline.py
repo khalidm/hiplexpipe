@@ -60,7 +60,7 @@ def make_pipeline(state):
         output='.sort.bam')
 
     # Apply samtools
-    (pipeline.merge(
+    (pipeline.collate(
         task_func=stages.apply_samtools_mpileup,
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
