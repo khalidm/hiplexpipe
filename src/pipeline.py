@@ -61,12 +61,12 @@ def make_pipeline(state):
         output='.sort.bam')
 
     # Apply samtools
-    (pipeline.collate(
+    pipeline.collate(
         task_func=stages.apply_samtools_mpileup,
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
-        output='all.bcf'))
+        output='all.bcf')
         # .follows('sort_bam_picard'))
 
     # Apply bcftools
