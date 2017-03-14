@@ -132,24 +132,24 @@ def make_pipeline(state):
         .follows('apply_vt'))
 
     # Apply BCF
-    (pipeline.transform(
-        task_func=stages.apply_bcf,
-        name='apply_bcf',
-        input=output_from('apply_vep'),
-        filter=suffix('.raw.vqsr.vt.vep.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vt.vep.bcf.vcf')
-        .follows('apply_vep'))
+    # (pipeline.transform(
+    #     task_func=stages.apply_bcf,
+    #     name='apply_bcf',
+    #     input=output_from('apply_vep'),
+    #     filter=suffix('.raw.vqsr.vt.vep.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vt.vep.bcf.vcf')
+    #     .follows('apply_vep'))
 
     # Apply SnpEff
     (pipeline.transform(
         task_func=stages.apply_snpeff,
         name='apply_snpeff',
         input=output_from('apply_bcf'),
-        filter=suffix('.raw.vqsr.vt.vep.bcf.vcf'),
+        filter=suffix('.raw.vt.vep.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='.annotated.vcf')
-        .follows('apply_bcf'))
+        .follows('apply_vep'))
 
     # Combine variants using GATK
     # (pipeline.transform(
