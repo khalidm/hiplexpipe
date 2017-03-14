@@ -120,7 +120,8 @@ class Stages(object):
         # bam_in = bam_in
         bams = ' '.join([bam for bam in bam_in])
         safe_make_dir('variants')
-        command = 'samtools mpileup -go {mpileup_out_bcf} -f {reference} {bams}'.format(
+        command = 'samtools mpileup -t DP,AD,ADF,ADR,SP,INFO/AD,INFO/ADF,INFO/ADR -go {mpileup_out_bcf}' \
+                  '-f {reference} {bams}'.format(
                           mpileup_out_bcf=mpileup_out_bcf,reference=self.reference,bams=bams)
         run_stage(self.state, 'apply_samtools_mpileup', command)
 
@@ -171,4 +172,13 @@ class Stages(object):
         snpeff_command = "eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
                     snpeff_conf=self.snpeff_conf, vcf_in=vcf_in, vcf_out=vcf_out)
         self.run_snpeff('apply_snpeff', snpeff_command)
+        #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
+
+    def apply_vcfanno(self, inputs, vcf_out):
+        '''Apply anno'''
+        vcf_in = inputs
+        #cores = self.get_stage_options('apply_snpeff', 'cores')
+        anno_command = "./vcfanno_linux64 {anno} {vcf_in} > {vcf_out}".format(
+                    anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
+        self.run_snpeff('apply_vcfanno', anno_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
