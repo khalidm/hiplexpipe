@@ -145,7 +145,7 @@ def make_pipeline(state):
     (pipeline.transform(
         task_func=stages.apply_snpeff,
         name='apply_snpeff',
-        input=output_from('apply_bcf'),
+        input=output_from('apply_vep'),
         filter=suffix('.raw.vt.vep.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='.annotated.vcf')
