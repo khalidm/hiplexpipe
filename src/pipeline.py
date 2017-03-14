@@ -126,7 +126,7 @@ def make_pipeline(state):
         task_func=stages.apply_vep,
         name='apply_vep',
         input=output_from('apply_vt'),
-        filter=suffix('.sort.bam'),
+        filter=suffix('.raw.vt.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='.raw.vt.vep.vcf')
         .follows('apply_vt'))
