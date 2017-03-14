@@ -96,7 +96,7 @@ def make_pipeline(state):
         input=output_from('sort_bam_picard'),
         # filter=suffix('.sort.bam'),
         #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-        output='all.bcf')
+        output='variants/all.mpileup')
         #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
         #output='variants/all.bcf')
         #.follows('sort_bam_picard'))
@@ -106,7 +106,7 @@ def make_pipeline(state):
         task_func=stages.apply_bcftools,
         name='apply_bcftools',
         input=output_from('apply_samtools_mpileup'),
-        filter=suffix('.bcf'),
+        filter=suffix('.mpileup'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='.raw.vcf')
         .follows('apply_samtools_mpileup'))
