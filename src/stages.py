@@ -148,9 +148,13 @@ class Stages(object):
         vcf_in = inputs
         cores = self.get_stage_options('apply_vep', 'cores')
         vep_command = "{vep_path}/variant_effect_predictor.pl --cache -i {vcf_in} --format vcf -o {vcf_vep} --force_overwrite --vcf " \
-                    "--fork {threads} --everything --offline --coding_only --no_intergenic".format(
-                    vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out, threads=cores)
+                    "--sift b --polyphen b --symbol --numbers --biotype --total_length --offline --fields " \
+                    "Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT,Protein_position,BIOTYPE".format(
+                    vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out)
         run_stage(self.state, 'apply_vep', vep_command)
+        --cache -i $VTVCF --cache --sift b --polyphen b --symbol --numbers --biotype --total_length
+        --force_overwrite --fork $THREADS -o $VEPVCF --vcf --offline --fields Consequence,Codons,Amino_acids,Gene,
+            SYMBOL,Feature,EXON,PolyPhen,SIFT,Protein_position,BIOTYPE
 
     def apply_bcf(self, inputs, vcf_out):
         '''Apply BCF'''
