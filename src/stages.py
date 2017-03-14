@@ -152,8 +152,8 @@ class Stages(object):
                     "Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT,Protein_position,BIOTYPE".format(
                     vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out)
         run_stage(self.state, 'apply_vep', vep_command)
-        #--cache -i $VTVCF --cache --sift b --polyphen b --symbol --numbers --biotype --total_length
-        #--force_overwrite --fork $THREADS -o $VEPVCF --vcf --offline --fields Consequence,Codons,Amino_acids,Gene,
+        #--cache -i VTVCF --cache --sift b --polyphen b --symbol --numbers --biotype --total_length
+        #--force_overwrite --fork THREADS -o VEPVCF --vcf --offline --fields Consequence,Codons,Amino_acids,Gene,
         #SYMBOL,Feature,EXON,PolyPhen,SIFT,Protein_position,BIOTYPE
 
     def apply_bcf(self, inputs, vcf_out):
