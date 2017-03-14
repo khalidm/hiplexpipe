@@ -129,7 +129,7 @@ class Stages(object):
         '''Bcftools call variants'''
         mpileup_in = mpileup_in
         # mpileup_in = ' '.join([vcf for vcf in vcf_files_in])
-        picard_args = 'bcftools call -vmO z -o {vcf_out} {mpileup_in}'.format(
+        command = 'bcftools call -vmO z -o {vcf_out} {mpileup_in}'.format(
                           vcf_out=vcf_out,mpileup_in=mpileup_in)
         run_stage(self.state, 'apply_bcftools', command)
 
