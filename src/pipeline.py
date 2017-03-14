@@ -37,17 +37,20 @@ def make_pipeline(state):
         # 00-002-0640_S192_L001_R1_001.fastq
         # OHI031002-P02F04_S318_L001_R1_001.fastq
 
+        # filter=formatter(
+        #     '.+/(?P<readid>[a-zA-Z0-9-]+)_(?P<sample>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
+
         filter=formatter(
-            '.+/(?P<readid>[a-zA-Z0-9-]+)_(?P<sample>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
+            '.+/(?P<sample>[a-zA-Z0-9]+)-(?P<sample2>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # e.g. C2WPF.5_Solexa-201237_5_X4311_1.fastq.gz
         add_inputs=add_inputs(
-            '{path[0]}/{readid[0]}_{sample[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
+            '{path[0]}/{sample[0]}_{sample2[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
         # Add an "extra" argument to the state (beyond the inputs and outputs)
         # which is the sample name. This is needed within the stage for finding out
         # sample specific configuration options
-        extras=['{readid[0]}', '{sample[0]}', '{lane[0]}', '{lib[0]}'],
+        extras=['{sample[0]}', '{sample2[0]}', '{readid[0]}', '{lane[0]}', '{lib[0]}'],
         # extras=['{sample[0]}'],
         # The output file name is the sample name with a .bam extension.
         output='alignments/{sample[0]}/{sample[0]}.bam')
@@ -148,27 +151,17 @@ def make_pipeline(state):
         input=output_from('apply_vep'),
         filter=suffix('.raw.vt.vep.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.annotated.vcf')
+        output='.raw.vt.vep.snpeff.vcf')
         .follows('apply_vep'))
 
-    # Combine variants using GATK
-    # (pipeline.transform(
-    #     task_func=stages.combine_variants_gatk,
-    #     name='combine_variants_gatk',
-    #     input=output_from('apply_snp_recalibrate_gatk'),
-    #     filter=suffix('.recal_SNP.vcf'),
-    #     add_inputs=add_inputs(['ALL.recal_INDEL.vcf']),
-    #     # output='.combined.vcf')
-    #     output='ALL.raw.vqsr.vcf')
-    #     .follows('apply_indel_recalibrate_gatk'))
-    #
-    # # Select variants using GATK
-    # pipeline.transform(
-    #     task_func=stages.select_variants_gatk,
-    #     name='select_variants_gatk',
-    #     input=output_from('combine_variants_gatk'),
-    #     filter=suffix('.combined.vcf'),
-    #     output='.selected.vcf')
-
+    # Apply vcfanno
+    (pipeline.transform(
+        task_func=stages.apply_vcfanno,
+        name='apply_vcfanno',
+        input=output_from('apply_vep'),
+        filter=suffix('.raw.vt.vep.snpeff.vcf'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.annotated.vcf')
+        .follows('apply_snpeff'))
 
     return pipeline
