@@ -95,7 +95,7 @@ def make_pipeline(state):
         name='apply_samtools_mpileup',
         input=output_from('sort_bam_picard'),
         #filter=suffix('.sort.bam'),
-        ilter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+        filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
         output='all.bcf')
         #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
         #output='variants/all.bcf')
