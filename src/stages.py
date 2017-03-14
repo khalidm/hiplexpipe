@@ -119,6 +119,7 @@ class Stages(object):
         '''Samtools mpileup'''
         # bam_in = bam_in
         bams = ' '.join([bam for bam in bam_in])
+        safe_make_dir('variants')
         command = 'samtools mpileup -go {mpileup_out_bcf} -f {reference} {bams}'.format(
                           mpileup_out_bcf=mpileup_out_bcf,reference=self.reference,bams=bams)
         run_stage(self.state, 'apply_samtools_mpileup', command)
