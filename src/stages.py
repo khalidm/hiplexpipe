@@ -72,7 +72,7 @@ class Stages(object):
         # print output
         pass
 
-    def align_bwa(self, inputs, bam_out, read_id, sample_id, lane, lib):
+    def align_bwa(self, inputs, bam_out, sample_id, sample_id2, read_id, lane, lib):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Align the paired end fastq files to the reference genome using bwa'''
         fastq_read1_in, fastq_read2_in = inputs
