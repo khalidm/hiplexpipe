@@ -117,7 +117,7 @@ class Stages(object):
                         absthresh=self.absthresh,
                         fastq_read1=fastq_read1_in,
                         fastq_read2=fastq_read2_in)
-        run_stage(self.state, 'undr_rover', command)
+        run_stage(self.state, 'apply_undr_rover', command)
 
     def sort_bam_picard(self, bam_in, sorted_bam_out):
         '''Sort the BAM file using Picard'''
