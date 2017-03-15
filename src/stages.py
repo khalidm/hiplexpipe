@@ -178,7 +178,7 @@ class Stages(object):
         '''Apply anno'''
         vcf_in = inputs
         #cores = self.get_stage_options('apply_snpeff', 'cores')
-        anno_command = "./vcfanno_linux64 {anno} {vcf_in} > {vcf_out}".format(
+        anno_command = "./vcfanno_linux64 -lau {annolau} {anno} {vcf_in} > {vcf_out}".format(
                     anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
         self.run_snpeff('apply_vcfanno', anno_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
