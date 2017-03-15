@@ -49,7 +49,7 @@ class Stages(object):
         self.coord == self.get_options('coord')
         self.primer == self.get_options('primer')
         self.proportionthresh == self.get_options('proportionthresh')
-        self.absthresh == self.get_options('absthresh')        
+        self.absthresh == self.get_options('absthresh')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
