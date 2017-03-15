@@ -50,8 +50,8 @@ def make_pipeline(state):
 
     # Call variants using undr_rover
     pipeline.transform(
-        task_func=stages.align_bwa,
-        name='align_bwa',
+        task_func=stages.apply_undr_rover,
+        name='apply_undr_rover',
         input=output_from('original_fastqs'),
         # Match the R1 (read 1) FASTQ file and grab the path and sample name.
         # This will be the first input to the stage.
