@@ -46,6 +46,10 @@ class Stages(object):
         self.snpeff_conf = self.get_options('snpeff_conf')
         self.vep_path = self.get_options('vep_path')
         self.vt_path = self.get_options('vt_path')
+        self.coord == self.get_options('coord')
+        self.primer == self.get_options('primer')
+        self.proportionthresh == self.get_options('proportionthresh')
+        self.absthresh == self.get_options('absthresh')        
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
