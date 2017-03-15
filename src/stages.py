@@ -110,7 +110,9 @@ class Stages(object):
                   '--proportionthresh {proportionthresh} ' \
                   '--absthresh {absthresh} ' \
                   '{fastq_read1} {fastq_read2}'.format(
-                        coord_file=self.coord_file, primer_file=self.primer_file,vcf_output=vcf_output,
+                        coord_file=self.coord_file, primer_file=self.primer_file,
+                        reference=self.reference,
+                        vcf_output=vcf_output,
                         proportionthresh=self.proportionthresh,
                         absthresh=self.absthresh,
                         fastq_read1=fastq_read1_in,
