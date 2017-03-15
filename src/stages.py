@@ -102,8 +102,8 @@ class Stages(object):
         safe_make_dir('variants/undr_rover')
         read_group = '"@RG\\tID:{readid}\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
             .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
-        command = 'undr_rover --primer_coords {coords} ' \
-                  '--primer_sequences {primer} ' \
+        command = 'undr_rover --primer_coords {coord_file} ' \
+                  '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
                   '--genotype ' \
