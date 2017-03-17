@@ -108,7 +108,7 @@ class Stages(object):
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
                   '--genotype ' \
-                  '--coverdir {coverdir}' \
+                  '--coverdir {coverdir} ' \
                   '--proportionthresh {proportionthresh} ' \
                   '--absthresh {absthresh} ' \
                   '{fastq_read1} {fastq_read2}'.format(
