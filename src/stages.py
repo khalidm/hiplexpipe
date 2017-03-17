@@ -107,7 +107,6 @@ class Stages(object):
                   '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
-                  '--genotype ' \
                   '--coverdir {coverdir} ' \
                   '--proportionthresh {proportionthresh} ' \
                   '--absthresh {absthresh} ' \
