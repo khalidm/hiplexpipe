@@ -50,6 +50,7 @@ class Stages(object):
         self.primer_file = self.get_options('primer_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
+        self.coverdir = self.get_options('coverdir')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
@@ -107,6 +108,7 @@ class Stages(object):
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
                   '--genotype ' \
+                  '--coverdir {coverdir}'
                   '--proportionthresh {propmoortionthresh} ' \
                   '--absthresh {absthresh} ' \
                   '{fastq_read1} {fastq_read2}'.format(
@@ -115,6 +117,7 @@ class Stages(object):
                         vcf_output=vcf_output,
                         proportionthresh=self.proportionthresh,
                         absthresh=self.absthresh,
+                        coverdir=self.coverdir,
                         fastq_read1=fastq_read1_in,
                         fastq_read2=fastq_read2_in)
         run_stage(self.state, 'apply_undr_rover', command)
