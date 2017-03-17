@@ -95,7 +95,7 @@ class Stages(object):
                           bam=bam_out)
         run_stage(self.state, 'align_bwa', command)
 
-    def apply_undr_rover(self, inputs, vcf_output, sample_id, sample_id2, read_id, lane, lib):
+    def apply_undr_rover(self, inputs, vcf_output, sample_id, read_id, lane, lib):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Align the paired end fastq files to the reference genome using bwa'''
         fastq_read1_in, fastq_read2_in = inputs
