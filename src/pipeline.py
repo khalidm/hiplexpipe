@@ -34,12 +34,12 @@ def make_pipeline(state):
         # characters.
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
         filter=formatter(
-            '.+/(?P<sample>[a-zA-Z0-9]+)-(?P<sample2>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq.gz'),
+            '.+/(?P<sample>[a-zA-Z0-9]+)-(?P<sample2>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R2_001.fastq
         add_inputs=add_inputs(
-            '{path[0]}/{sample[0]}-{sample2[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq.gz'),
+            '{path[0]}/{sample[0]}-{sample2[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
         # Add an "extra" argument to the state (beyond the inputs and outputs)
         # which is the sample name. This is needed within the stage for finding out
         # sample specific configuration options
@@ -59,12 +59,12 @@ def make_pipeline(state):
         # characters.
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
         filter=formatter(
-            '.+/(?P<sample>[a-zA-Z0-9]+)-(?P<sample2>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq.gz'),
+            '.+/(?P<sample>[a-zA-Z0-9]+)-(?P<sample2>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R2_001.fastq
         add_inputs=add_inputs(
-            '{path[0]}/{sample[0]}-{sample2[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq.gz'),
+            '{path[0]}/{sample[0]}-{sample2[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
         # Add an "extra" argument to the state (beyond the inputs and outputs)
         # which is the sample name. This is needed within the stage for finding out
         # sample specific configuration options
