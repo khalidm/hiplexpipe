@@ -76,13 +76,13 @@ class Stages(object):
         # print output
         pass
 
-    def align_bwa(self, inputs, bam_out, sample_id, sample_id2, read_id, lane, lib):
+    def align_bwa(self, inputs, bam_out, sample_id, read_id, lane, lib):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Align the paired end fastq files to the reference genome using bwa'''
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
         safe_make_dir('alignments/{sample}'.format(sample=sample_id))
-        read_group = '"@RG\\tID:{readid}\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+        read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{read_id}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
             .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
         command = 'bwa mem -M -t {cores} -R {read_group} {reference} {fastq_read1} {fastq_read2} ' \
                   '| samtools view -b -h -o {bam} -' \
@@ -100,14 +100,14 @@ class Stages(object):
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
         safe_make_dir('variants/undr_rover')
-        read_group = '"@RG\\tID:{readid}\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+        read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{read_id}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
             .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
         command = 'undr_rover --primer_coords {coord_file} ' \
                   '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
                   '--genotype ' \
-                  '--proportionthresh {proportionthresh} ' \
+                  '--proportionthresh {propmoortionthresh} ' \
                   '--absthresh {absthresh} ' \
                   '{fastq_read1} {fastq_read2}'.format(
                         coord_file=self.coord_file, primer_file=self.primer_file,
