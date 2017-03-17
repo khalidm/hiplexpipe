@@ -33,6 +33,7 @@ def make_pipeline(state):
         # We assume the sample name may consist of only alphanumeric
         # characters.
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
+        # new sample name = OHI031002-P02F04
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq.gz'),
         # Add one more inputs to the stage:
