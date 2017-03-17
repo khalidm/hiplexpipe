@@ -109,7 +109,7 @@ class Stages(object):
                   '--out {vcf_output} ' \
                   '--genotype ' \
                   '--coverdir {coverdir}' \
-                  '--proportionthresh {propmoortionthresh} ' \
+                  '--proportionthresh {proportionthresh} ' \
                   '--absthresh {absthresh} ' \
                   '{fastq_read1} {fastq_read2}'.format(
                         coord_file=self.coord_file, primer_file=self.primer_file,
