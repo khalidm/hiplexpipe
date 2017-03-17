@@ -50,7 +50,7 @@ class Stages(object):
         self.primer_file = self.get_options('primer_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
-        self.coverdir = self.get_options('coverdir')
+        self.coverdir = self.get_options('coverdirs')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
@@ -108,7 +108,7 @@ class Stages(object):
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
                   '--genotype ' \
-                  '--coverdir {coverdir}'
+                  '--coverdir {coverdir}' \
                   '--proportionthresh {propmoortionthresh} ' \
                   '--absthresh {absthresh} ' \
                   '{fastq_read1} {fastq_read2}'.format(
