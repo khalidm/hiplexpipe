@@ -50,6 +50,7 @@ class Stages(object):
         self.primer_file = self.get_options('primer_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
+        self.anno = self.get_options('anno')
         self.coverdir = self.get_options('coverdirs')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
@@ -101,13 +102,12 @@ class Stages(object):
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
         safe_make_dir('variants/undr_rover')
-        read_group = '"@RG\\tID:{readid}\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
-            .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
+        # read_group = '"@RG\\tID:{readid}\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+        #     .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
         command = 'undr_rover --primer_coords {coord_file} ' \
                   '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
                   '--out {vcf_output} ' \
-                  '--genotype ' \
                   '--coverdir {coverdir} ' \
                   '--proportionthresh {proportionthresh} ' \
                   '--absthresh {absthresh} ' \
