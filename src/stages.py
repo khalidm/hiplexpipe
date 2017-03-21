@@ -145,7 +145,7 @@ class Stages(object):
         '''Calculate coverage using Picard'''
         command = 'bam stats --basic --in {bam_in} > {coverage_out}'.format(
                           bam_in=bam_in, coverage_out=coverage_out)
-        run_stage('target_coverage_bamutil', command)
+        run_stage(self.state, 'target_coverage_bamutil', command)
 
     #samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
