@@ -51,6 +51,7 @@ class Stages(object):
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
         self.coverdir = self.get_options('coverdirs')
+        self.fragment_bed = self.get_options('fragment_bed')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
@@ -146,6 +147,13 @@ class Stages(object):
         command = 'bam stats --basic --in {bam_in} &> {coverage_out}'.format(
                           bam_in=bam_in, coverage_out=coverage_out)
         run_stage(self.state, 'target_coverage_bamutil', command)
+
+    # coverage bam interval
+    def target_coverage_bamutil_interval(self, bam_in, coverage_out):
+        '''Calculate coverage using Picard'''
+        command = 'bam stats --basic --in {bam_in} --regionList {fragment_bed} &> {coverage_out}'.format(
+                          bam_in=bam_in, fragment_bed = self.fragment_bed, coverage_out=coverage_out)
+        run_stage(self.state, 'target_coverage_bamutil_interval', command)
 
     #samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
