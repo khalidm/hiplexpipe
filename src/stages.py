@@ -130,7 +130,7 @@ class Stages(object):
         self.run_picard('sort_bam_picard', picard_args)
 
 
-    # coverage
+    # coverage picard
     def target_coverage(self, bam_in, coverage_out):
         '''Calculate coverage using Picard'''
         picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
@@ -139,6 +139,13 @@ class Stages(object):
                           bam_in=bam_in, coverage_out=coverage_out,
                           reference=self.reference, interval_file=self.interval_file)
         self.run_picard('target_coverage', picard_args)
+
+    # coverage bam
+    def target_coverage_bamutil(self, bam_in, coverage_out):
+        '''Calculate coverage using Picard'''
+        command = 'bam stats --basic --in {bam_in} > {coverage_out}'.format(
+                          bam_in=bam_in, coverage_out=coverage_out)
+        run_stage('target_coverage_bamutil', command)
 
     #samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
