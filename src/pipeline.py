@@ -85,7 +85,7 @@ def make_pipeline(state):
         task_func=stages.target_coverage,
         name='target_coverage',
         input=output_from('sort_bam_picard'),
-        filter=suffix('.sort.bam'),
+        # filter=suffix('.sort.bam'),
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
         output='coverage/{sample[0]}.coverage.txt')
