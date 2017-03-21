@@ -80,7 +80,7 @@ def make_pipeline(state):
         filter=suffix('.bam'),
         output='.sort.bam')
 
-    # Get the BAM file using Picard
+    # Coverage using Picard
     pipeline.transform(
         task_func=stages.target_coverage,
         name='target_coverage',
@@ -89,6 +89,7 @@ def make_pipeline(state):
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
         output='coverage/{sample[0]}.coverage.txt')
+        # .follows('sort_bam_picard'))
 
     # Apply samtools
     pipeline.merge(
