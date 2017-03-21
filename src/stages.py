@@ -143,7 +143,7 @@ class Stages(object):
     # coverage bam
     def target_coverage_bamutil(self, bam_in, coverage_out):
         '''Calculate coverage using Picard'''
-        command = 'bam stats --basic --in {bam_in} > {coverage_out}'.format(
+        command = 'bam stats --basic --in {bam_in} &> {coverage_out}'.format(
                           bam_in=bam_in, coverage_out=coverage_out)
         run_stage(self.state, 'target_coverage_bamutil', command)
 
