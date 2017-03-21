@@ -68,7 +68,7 @@ def make_pipeline(state):
         # Add an "extra" argument to the state (beyond the inputs and outputs)
         # which is the sample name. This is needed within the stage for finding out
         # sample specific configuration options
-        extras=['{sample[0]}', '{readid[0]}', '{lane[0]}', '{lib[0]}'],        
+        extras=['{sample[0]}', '{readid[0]}', '{lane[0]}', '{lib[0]}'],
         # The output file name is the sample name with a .bam extension.
         output='variants/undr_rover/{sample[0]}_{readid[0]}.vcf')
 
@@ -79,6 +79,16 @@ def make_pipeline(state):
         input=output_from('align_bwa'),
         filter=suffix('.bam'),
         output='.sort.bam')
+
+    # Get the BAM file using Picard
+    pipeline.transform(
+        task_func=stages.target_coverage,
+        name='target_coverage',
+        input=output_from('sort_bam_picard'),
+        filter=suffix('.sort.bam'),
+        filter=formatter(
+            '.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+        output='coverage/{sample[0]}.coverage.txt')
 
     # Apply samtools
     pipeline.merge(

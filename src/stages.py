@@ -12,7 +12,8 @@ from runner import run_stage
 import os
 
 # PICARD_JAR = '$PICARD_HOME/lib/picard-1.69.jar'
-PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/picard/picard-tools-2.0.1/picard.jar'
+# PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/picard/picard-tools-2.0.1/picard.jar'
+PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/picard/picard-tools-2.8.3/picard.jar'
 SNPEFF_JAR = '/usr/local/easybuild/software/snpEff/4.1d-Java-1.7.0_80/snpEff.jar'
 
 GATK_JAR = '$GATK_HOME/GenomeAnalysisTK.jar'
@@ -25,11 +26,9 @@ def java_command(jar_path, mem_in_gb, command_args):
     return 'java -Xmx{mem}g -jar {jar_path} {command_args}'.format(
         jar_path=jar_path, mem=java_mem, command_args=command_args)
 
-
 def run_java(state, stage, jar_path, mem, args):
     command = java_command(jar_path, mem, args)
     run_stage(state, stage, command)
-
 
 class Stages(object):
     def __init__(self, state):
@@ -47,6 +46,7 @@ class Stages(object):
         self.vep_path = self.get_options('vep_path')
         self.vt_path = self.get_options('vt_path')
         self.coord_file = self.get_options('coord_file')
+        self.interval_file = self.get_options('interval_file')
         self.primer_file = self.get_options('primer_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
@@ -128,6 +128,17 @@ class Stages(object):
                       'MAX_RECORDS_IN_RAM=5000000 CREATE_INDEX=True'.format(
                           bam_in=bam_in, sorted_bam_out=sorted_bam_out)
         self.run_picard('sort_bam_picard', picard_args)
+
+
+    # coverage
+    def target_coverage(self, bam_in, coverage_out):
+        '''Calculate coverage using Picard'''
+        picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
+                      'R={reference} BAIT_INTERVALS={interval_file} ' \
+                      'TARGET_INTERVALS={interval_file}'.format(
+                          bam_in=bam_in, coverage_out=coverage_out,
+                          reference=self.reference, interval_file=self.interval_file)
+        self.run_picard('target_coverage', picard_args)
 
     #samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
