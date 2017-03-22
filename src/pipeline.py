@@ -37,7 +37,7 @@ def make_pipeline(state):
         # Tu's sample fastq filename
         # Run14_PRBB_Plate5_A01_E70056_S385_L001_R1_001.fastq.gz
         filter=formatter(
-            '.+/(?P<sample>[a-zA-Z0-9-_]+)_(?P<lane>[^La-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
+            '.+/(?P<sample>[a-zA-Z0-9-_]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R2_001.fastq
