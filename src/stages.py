@@ -78,14 +78,14 @@ class Stages(object):
         # print output
         pass
 
-    def align_bwa(self, inputs, bam_out, sample_id, read_id, lane, lib):
+    def align_bwa(self, inputs, bam_out, sample_id, lane, lib):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Align the paired end fastq files to the reference genome using bwa'''
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
-        safe_make_dir('alignments/{sample}_{readid}'.format(sample=sample_id, readid=read_id))
-        read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{readid}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
-            .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
+        safe_make_dir('alignments/{sample}'.format(sample=sample_id, readid=read_id))
+        read_group = '"@RG\\tID:1\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+            .format(lib=lib, lane=lane, sample=sample_id)
         command = 'bwa mem -M -t {cores} -R {read_group} {reference} {fastq_read1} {fastq_read2} ' \
                   '| samtools view -b -h -o {bam} -' \
                   .format(cores=cores,
@@ -96,14 +96,14 @@ class Stages(object):
                           bam=bam_out)
         run_stage(self.state, 'align_bwa', command)
 
-    def apply_undr_rover(self, inputs, vcf_output, sample_id, read_id, lane, lib):
+    def apply_undr_rover(self, inputs, vcf_output, sample_id, lane, lib):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Align the paired end fastq files to the reference genome using bwa'''
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
         safe_make_dir('variants/undr_rover')
-        read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{readid}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
-            .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
+        read_group = '"@RG\\tID:1\\tSM:{sample}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+            .format(lib=lib, lane=lane, sample=sample_id)
         command = 'undr_rover --primer_coords {coord_file} ' \
                   '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
