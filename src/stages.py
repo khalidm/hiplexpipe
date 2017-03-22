@@ -131,7 +131,7 @@ class Stages(object):
         self.run_picard('sort_bam_picard', picard_args)
 
     # index sorted bam file
-    def index_sort_bam_picard(self, bam_in):
+    def index_sort_bam_picard(self, bam_in, bam_index):
         '''Calculate coverage using Picard'''
         command = 'samtools index {bam_in}'.format(
                           bam_in=bam_in)
