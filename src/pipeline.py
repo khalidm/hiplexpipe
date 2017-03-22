@@ -82,11 +82,10 @@ def make_pipeline(state):
 
     # samtools index sorted bam file
     pipeline.transform(
-        task_func=stages.sort_bam_picard,
+        task_func=stages.index_sort_bam_picard,
         name='index_sort_bam_picard',
         input=output_from('sort_bam_picard'),
-        filter=suffix('.sort.bam'),
-        output='.sort.bam.bai')
+        filter=suffix('.sort.bam'))
 
     # Coverage using Picard
     (pipeline.transform(
