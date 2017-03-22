@@ -80,6 +80,14 @@ def make_pipeline(state):
         filter=suffix('.bam'),
         output='.sort.bam')
 
+    # samtools index sorted bam file
+    pipeline.transform(
+        task_func=stages.sort_bam_picard,
+        name='index_sort_bam_picard',
+        input=output_from('sort_bam_picard'),
+        filter=suffix('sort.bam'),
+        output='.sort.bam.bai')
+
     # Coverage using Picard
     (pipeline.transform(
         task_func=stages.target_coverage,
@@ -100,7 +108,7 @@ def make_pipeline(state):
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-_]+).sort.bam'),
         output='coverage/{sample[0]}.bamutil.txt')
-        .follows('sort_bam_picard'))
+        .follows('index_sort_bam_picard'))
 
     # Coverage using bam with interval
     (pipeline.transform(
@@ -111,7 +119,7 @@ def make_pipeline(state):
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-_]+).sort.bam'),
         output='coverage/{sample[0]}.bamutil2.txt')
-        .follows('sort_bam_picard'))
+        .follows('index_sort_bam_picard'))
 
     # Apply samtools
     pipeline.merge(
