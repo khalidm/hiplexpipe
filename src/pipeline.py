@@ -198,7 +198,6 @@ def make_pipeline(state):
         task_func=stages.apply_cat_vcf,
         name='apply_cat_vcf',
         input=output_from('apply_undr_rover'),
-        output='.annotated.vcf')
-
+        output='ur.annotated.vcf')
 
     return pipeline
