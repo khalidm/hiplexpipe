@@ -98,7 +98,7 @@ class Stages(object):
 
     def apply_undr_rover(self, inputs, vcf_output, sample_id, read_id, lane, lib):
         # def align_bwa(self, inputs, bam_out, sample_id):
-        '''Align the paired end fastq files to the reference genome using bwa'''
+        '''Apply undr_rover to call variants from paired end fastq files'''
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
         safe_make_dir('variants/undr_rover')
