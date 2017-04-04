@@ -229,3 +229,9 @@ class Stages(object):
                     anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
         self.run_snpeff('apply_vcfanno', anno_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
+
+    def apply_cat_vcf(self, inputs, vcf_out):
+        vcfs = ' '.join([vcf for vcf in inputs])
+        # safe_make_dir('variants')
+        command = 'vcf-concat {vcfs} | vcf-sort -c | bgzip -c > {vcf_out} '.format(vcfs=vcfs,vcf_out=vcf_out)
+        run_stage(self.state, 'apply_cat_vcf', command)

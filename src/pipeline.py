@@ -193,4 +193,12 @@ def make_pipeline(state):
         output='.annotated.vcf')
         .follows('apply_snpeff'))
 
+    # Concatenate undr_rover vcf files
+    pipeline.merge(
+        task_func=stages.apply_cat_vcf,
+        name='apply_cat_vcf',
+        input=output_from('apply_undr_rover'),
+        output='.annotated.vcf')
+
+
     return pipeline
