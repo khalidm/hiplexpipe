@@ -204,7 +204,8 @@ def make_pipeline(state):
         task_func=stages.apply_vep,
         name='apply_vep_ur',
         input=output_from('apply_cat_vcf'),
-        output='variants/undr_rover/ur.vep.vcf')
+        filter=suffix('.vcf.gz'),
+        output='.vep.vcf')
         .follows('apply_cat_vcf'))
 
     return pipeline
