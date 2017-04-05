@@ -63,12 +63,11 @@ def make_pipeline(state):
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R2_001.fastq
-        add_inputs=add_inputs(
-            '{path[0]}/{sample[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
-        # Add an "extra" argument to the state (beyond the inputs and outputs)
-        # which is the sample name. This is needed within the stage for finding out
-        # sample specific configuration options
-        extras=['{variants/undr_rover/coverdir/{sample[0]}_{readid[0]}.coverage}', '{sample[0]}', '{readid[0]}', '{lane[0]}', '{lib[0]}'],
+
+        # add_inputs=add_inputs(
+            # '{path[0]}/{sample[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
+        # extras=['{sample[0]}', '{readid[0]}', '{lane[0]}', '{lib[0]}'],
+
         # The output file name is the sample name with a .bam extension.
         output='variants/undr_rover/{sample[0]}_{readid[0]}.vcf')
 

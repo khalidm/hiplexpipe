@@ -96,14 +96,14 @@ class Stages(object):
                           bam=bam_out)
         run_stage(self.state, 'align_bwa', command)
 
-    def apply_undr_rover(self, inputs, vcf_output, coverfile, sample_id, read_id, lane, lib):
+    def apply_undr_rover(self, inputs):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Apply undr_rover to call variants from paired end fastq files'''
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
         safe_make_dir('variants/undr_rover')
-        read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{readid}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
-            .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
+        # read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{readid}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
+            # .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
         command = 'undr_rover --primer_coords {coord_file} ' \
                   '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
