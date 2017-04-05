@@ -233,7 +233,15 @@ class Stages(object):
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
 
     def apply_cat_vcf(self, inputs, vcf_out):
+        '''Concatenate and sort undr_rover VCF files for downstream analysis'''
         vcfs = ' '.join([vcf for vcf in inputs])
         # safe_make_dir('variants')
         command = 'vcf-concat {vcfs} | vcf-sort -c | bgzip -c > {vcf_out} '.format(vcfs=vcfs,vcf_out=vcf_out)
         run_stage(self.state, 'apply_cat_vcf', command)
+
+    # def apply_cat_vcf(self, inputs, vcf_out):
+    #     '''Concatenate and sort undr_rover VCF files for downstream analysis'''
+    #     vcfs = ' '.join([vcf for vcf in inputs])
+    #     # safe_make_dir('variants')
+    #     command = 'vcf-concat {vcfs} | vcf-sort -c | bgzip -c > {vcf_out} '.format(vcfs=vcfs,vcf_out=vcf_out)
+    #     run_stage(self.state, 'apply_cat_vcf', command)

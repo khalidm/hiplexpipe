@@ -199,4 +199,11 @@ def make_pipeline(state):
         input=output_from('apply_undr_rover'),
         output='variants/undr_rover/ur.vcf.gz')
 
+    # Apple VEP on concatenated undr_rover vcf file
+    pipeline.merge(
+        task_func=stages.apply_vep2,
+        name='apply_vep2',
+        input=output_from('apply_cat_vcf'),
+        output='variants/undr_rover/ur.vep.vcf')
+
     return pipeline
