@@ -96,7 +96,7 @@ class Stages(object):
                           bam=bam_out)
         run_stage(self.state, 'align_bwa', command)
 
-    def apply_undr_rover(self, inputs):
+    def apply_undr_rover(self, inputs, coverfile):
         # def align_bwa(self, inputs, bam_out, sample_id):
         '''Apply undr_rover to call variants from paired end fastq files'''
         fastq_read1_in, fastq_read2_in = inputs
