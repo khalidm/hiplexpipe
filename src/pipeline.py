@@ -201,8 +201,8 @@ def make_pipeline(state):
 
     # Apple VEP on concatenated undr_rover vcf file
     (pipeline.transform(
-        task_func=stages.apply_vep2,
-        name='apply_vep2',
+        task_func=stages.apply_vep,
+        name='apply_vep',
         input=output_from('apply_cat_vcf'),
         output='variants/undr_rover/ur.vep.vcf')
         .follows('apply_cat_vcf'))
