@@ -208,4 +208,13 @@ def make_pipeline(state):
         output='.vep.vcf')
         .follows('apply_cat_vcf'))
 
+    # Apple vcfanno on concatenated/vep undr_rover vcf file
+    (pipeline.transform(
+        task_func=stages.apply_vcfanno,
+        name='apply_vcfanno_ur',
+        input=output_from('apply_vcfanno_ur'),
+        filter=suffix('.vep.vcf'),
+        output='.vep.anno.vcf')
+        .follows('apply_vep_ur'))
+
     return pipeline
