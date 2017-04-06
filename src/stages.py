@@ -52,7 +52,7 @@ class Stages(object):
         self.absthresh = self.get_options('absthresh')
         self.coverdir = self.get_options('coverdirs')
         self.fragment_bed = self.get_options('fragment_bed')
-        self.annolau = self.get_options('annolau')
+        self.annolua = self.get_options('annolua')
         self.anno = self.get_options('anno')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
@@ -229,8 +229,8 @@ class Stages(object):
         '''Apply anno'''
         vcf_in = inputs
         #cores = self.get_stage_options('apply_snpeff', 'cores')
-        anno_command = "./vcfanno_linux64 -lau {annolau} {anno} {vcf_in} > {vcf_out}".format(
-                    annolau=self.annolau, anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
+        anno_command = "./vcfanno_linux64 -lua {annolua} {anno} {vcf_in} > {vcf_out}".format(
+                    annolua=self.annolua, anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
         run_stage(self.state, 'apply_vcfanno', anno_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
 
