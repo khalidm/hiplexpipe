@@ -231,7 +231,7 @@ class Stages(object):
         #cores = self.get_stage_options('apply_snpeff', 'cores')
         anno_command = "./vcfanno_linux64 -lau {annolau} {anno} {vcf_in} > {vcf_out}".format(
                     annolau=self.annolau, anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
-        run_stage('apply_vcfanno', anno_command)
+        run_stage(self.state, 'apply_vcfanno', anno_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
 
     def apply_cat_vcf(self, inputs, vcf_out):
