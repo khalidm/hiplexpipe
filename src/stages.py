@@ -138,8 +138,8 @@ class Stages(object):
     # index sorted bam file
     def index_sort_bam_picard(self, bam_in, bam_index):
         '''Index sorted bam using samtools'''
-        command = 'samtools index {bam_in}'.format(
-                          bam_in=bam_in)
+        command = 'samtools index {bam_in} {bam_index}'.format(
+                          bam_in=bam_in, bam_index=bam_index)
         run_stage(self.state, 'index_sort_bam_picard', command)
 
     # coverage picard

@@ -85,7 +85,7 @@ def make_pipeline(state):
         name='index_sort_bam_picard',
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
-        output='sort.bam.bai')
+        output='.sort.bam.bai')
 
     # Coverage using Picard
     (pipeline.transform(
