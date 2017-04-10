@@ -228,7 +228,7 @@ def make_pipeline(state):
     (pipeline.transform(
         task_func=stages.apply_summarize_picard,
         name='apply_summarize_picard',
-        input=('./coverage'),
+        input=('./coverage/'),
         filter=suffix('.coverage.txt'),
         output='coverage/all.hsmetrics.txt')
         .follows('target_coverage'))
