@@ -225,11 +225,10 @@ def make_pipeline(state):
         output='coverage/all.multicov.txt')
 
     # Apply summarize picard coverage
-    (pipeline.transform(
+    (pipeline.merge(
         task_func=stages.apply_summarize_picard,
         name='apply_summarize_picard',
-        input=('./coverage/'),
-        filter=suffix('.coverage.txt'),
+        input=output_from('target_coverage'),
         output='coverage/all.hsmetrics.txt')
         .follows('target_coverage'))
 
