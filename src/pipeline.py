@@ -222,6 +222,6 @@ def make_pipeline(state):
         task_func=stages.apply_multicov,
         name='apply_multicov',
         input=output_from('sort_bam_picard'),
-        output='coverage/all.coverage.txt')
+        output='coverage/all.multicov.txt')
 
     return pipeline
