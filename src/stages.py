@@ -176,6 +176,16 @@ class Stages(object):
                           bams=bams, target_bed=self.target_bed, multicov=multicov)
         run_stage(self.state, 'apply_multicov', command)
 
+    # multicov
+    def apply_summarize_picard(self, input, output):
+        '''Samtools mpileup'''
+        input = input
+        # bams = ' '.join([bam for bam in bam_in])
+        # safe_make_dir('variants')
+        command = 'python coverage_summary.py > {output} '.format(
+                          output=output)
+        run_stage(self.state, 'apply_summarize_picard', command)
+
     # samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
         '''Samtools mpileup'''

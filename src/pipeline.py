@@ -224,4 +224,12 @@ def make_pipeline(state):
         input=output_from('sort_bam_picard'),
         output='coverage/all.multicov.txt')
 
+    # Apply summarize picard coverage
+    (pipeline.transform(
+        task_func=stages.apply_summarize_picard,
+        name='apply_summarize_picard',
+        input=output_from('target_coverage'),
+        output='coverage/all.hsmetrics.txt')
+        .follows('target_coverage'))
+
     return pipeline
