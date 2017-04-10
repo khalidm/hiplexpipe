@@ -217,4 +217,11 @@ def make_pipeline(state):
         output='.vep.anno.vcf')
         .follows('apply_vep_ur'))
 
+    # Apply multi coverage
+    pipeline.merge(
+        task_func=stages.apply_multicov,
+        name='apply_multicov',
+        input=output_from('sort_bam_picard'),
+        output='coverage/all.coverage.txt')
+
     return pipeline

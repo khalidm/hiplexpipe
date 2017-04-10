@@ -46,6 +46,7 @@ class Stages(object):
         self.vep_path = self.get_options('vep_path')
         self.vt_path = self.get_options('vt_path')
         self.coord_file = self.get_options('coord_file')
+        self.target_bed = self.get_options('target_bed')
         self.interval_file = self.get_options('interval_file')
         self.primer_file = self.get_options('primer_file')
         self.proportionthresh = self.get_options('proportionthresh')
@@ -165,7 +166,17 @@ class Stages(object):
                           bam_in=bam_in, fragment_bed = self.fragment_bed, coverage_out=coverage_out)
         run_stage(self.state, 'target_coverage_bamutil_interval', command)
 
-    #samtools
+    # multicov
+    def apply_multicov(self, bam_in, multicov):
+        '''Samtools mpileup'''
+        # bam_in = bam_in
+        bams = ' '.join([bam for bam in bam_in])
+        # safe_make_dir('variants')
+        command = 'bedtools multicov -bams {bams} -bed {target_bed} > {multicov} '.format(
+                          bams=bams, target_bed=target_bed, multicov=multicov)
+        run_stage(self.state, 'apply_multicov', command)
+
+    # samtools
     def apply_samtools_mpileup(self, bam_in, mpileup_out_bcf):
         '''Samtools mpileup'''
         # bam_in = bam_in
@@ -176,7 +187,7 @@ class Stages(object):
                           mpileup_out_bcf=mpileup_out_bcf,reference=self.reference,bams=bams)
         run_stage(self.state, 'apply_samtools_mpileup', command)
 
-    #bcftools
+    # bcftools
     def apply_bcftools(self, mpileup_in, vcf_out):
         '''Bcftools call variants'''
         mpileup_in = mpileup_in
