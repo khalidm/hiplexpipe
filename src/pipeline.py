@@ -223,7 +223,7 @@ def make_pipeline(state):
         name='apply_multicov',
         input=output_from('sort_bam_picard'),
         output='coverage/all.multicov.txt')
-        .follows(index_sort_bam_picard))
+        .follows('index_sort_bam_picard'))
 
     # Apply summarize picard coverage
     (pipeline.merge(
