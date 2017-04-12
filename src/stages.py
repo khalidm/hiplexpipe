@@ -183,7 +183,7 @@ class Stages(object):
         h, m = walltime_hours.split(':')
         walltime = int(h) * 3600 + int(m) * 60
         # safe_make_dir('variants')
-        command = 'jupyter nbconvert --to html --execute coverage_analysis_main2.ipynb ' \
+        command = 'jupyter nbconvert --to html --execute coverage_analysis_main.ipynb ' \
                     '--ExecutePreprocessor.timeout={walltime}'.format(walltime=walltime)
         run_stage(self.state, 'apply_multicov_plots', command)
 
