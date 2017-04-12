@@ -217,7 +217,7 @@ def make_pipeline(state):
         output='.vep.anno.vcf')
         .follows('apply_vep_ur'))
 
-    # Apply multi coverage
+    # Apply summarize multi coverage
     (pipeline.merge(
         task_func=stages.apply_multicov,
         name='apply_multicov',
@@ -232,5 +232,13 @@ def make_pipeline(state):
         input=output_from('target_coverage'),
         output='coverage/all.hsmetrics.txt')
         .follows('target_coverage'))
+
+    # Apply summarize multicov coverage plots
+    (pipeline.merge(
+        task_func=stages.apply_multicov_plots,
+        name='apply_multicov_plots',
+        input=output_from('apply_multicov'),
+        output='coverage/coverage_analysis_main.html')
+        .follows('apply_multicov'))
 
     return pipeline

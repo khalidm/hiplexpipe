@@ -172,9 +172,20 @@ class Stages(object):
         # bam_in = bam_in
         bams = ' '.join([bam for bam in bam_in])
         # safe_make_dir('variants')
-        command = 'bedtools multicov -bams {bams} -bed {target_bed} > {multicov} '.format(
+        command = 'bedtools multicov -bams {bams} -bed {target_bed} > {multicov}'.format(
                           bams=bams, target_bed=self.target_bed, multicov=multicov)
         run_stage(self.state, 'apply_multicov', command)
+
+    # multicov plots
+    def apply_multicov_plots(self, bam_in, multicov):
+        '''Generate multicov plots'''
+        walltime_hours = self.get_stage_options('apply_multicov_plots', 'walltime')
+        h, m = walltime_hours.split(':')
+        walltime = int(h) * 3600 + int(m) * 60
+        # safe_make_dir('variants')
+        command = 'jupyter nbconvert --to html --execute coverage_analysis_main2.ipynb ' \
+                    '--ExecutePreprocessor.timeout={walltime}'.format(walltime=walltime)
+        run_stage(self.state, 'apply_multicov_plots', command)
 
     # summarize picard
     def apply_summarize_picard(self, input, output):
