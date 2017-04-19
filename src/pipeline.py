@@ -221,8 +221,8 @@ def make_pipeline(state):
     (pipeline.transform(
         task_func=stages.apply_snpeff,
         name='apply_snpeff_ur',
-        input=output_from('apply_vcfanno'),
-        filter=suffix('.vep.vcf'),
+        input=output_from('apply_vcfanno_ur'),
+        filter=suffix('.vep.anno.vcf'),
         output='.vep.anno.snpeff.vcf')
         .follows('apply_vcfanno_ur'))
 
