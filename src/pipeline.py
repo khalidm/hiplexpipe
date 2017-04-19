@@ -208,7 +208,7 @@ def make_pipeline(state):
         output='.vep.vcf')
         .follows('apply_cat_vcf'))
 
-    # Apple vcfanno on concatenated/vep undr_rover vcf file
+    # Apply vcfanno on concatenated/vep undr_rover vcf file
     (pipeline.transform(
         task_func=stages.apply_vcfanno,
         name='apply_vcfanno_ur',
@@ -216,6 +216,15 @@ def make_pipeline(state):
         filter=suffix('.vep.vcf'),
         output='.vep.anno.vcf')
         .follows('apply_vep_ur'))
+
+    # Apply snpeff
+    (pipeline.transform(
+        task_func=stages.apply_snpeff,
+        name='apply_snpeff',
+        input=output_from('apply_vcfanno'),
+        filter=suffix('.vep.vcf'),
+        output='.vep.anno.snpeff.vcf')
+        .follows('apply_vcfanno_ur'))
 
     # Apply summarize multi coverage
     (pipeline.merge(
