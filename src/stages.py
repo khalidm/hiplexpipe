@@ -233,7 +233,7 @@ class Stages(object):
         cores = self.get_stage_options('apply_vep', 'cores')
         vep_command = "{vep_path}/variant_effect_predictor.pl --cache --refseq --offline --fasta {reference} " \
                     "-i {vcf_in} --sift b --polyphen b --symbol --numbers --biotype --total_length --hgvs " \
-                    "--format vcf -o {vcf_vep} --force_overwrite --vcf --flag_pick " \
+                    "--format vcf -o {vcf_vep} --force_overwrite --vcf ----most_severe " \
                     "--fields Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT," \
                     "Protein_position,BIOTYPE,HGVSc,HGVSp,cDNA_position,CDS_position,HGVSc,HGVSp,cDNA_position,CDS_position " \
                     "--fork {threads}".format(
