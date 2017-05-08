@@ -235,8 +235,8 @@ class Stages(object):
                     "-i {vcf_in} --sift b --polyphen b --symbol --numbers --biotype --total_length --hgvs " \
                     "--format vcf -o {vcf_vep} --force_overwrite --vcf --most_severe " \
                     "--fields Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT," \
-                    "Protein_position,BIOTYPE,HGVSc,HGVSp,cDNA_position,CDS_position,HGVSc,HGVSp,cDNA_position,CDS_position " \
-                    "--fork {threads}".format(
+                    "Protein_position,BIOTYPE,HGVSc,HGVSp,cDNA_position,CDS_position,HGVSc,HGVSp,cDNA_position,CDS_position,PICK " \
+                    "--fork {threads} --flag_pick".format(
                     reference=self.reference, vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out, threads=cores)
         run_stage(self.state, 'apply_vep', vep_command)
 
