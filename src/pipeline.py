@@ -59,7 +59,7 @@ def make_pipeline(state):
         # characters.
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
         filter=formatter(
-            '.+/(?P<sample>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
+            '.+/(?P<sample>[a-zA-Z0-9-_]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
         #    1. The corresponding R2 FASTQ file
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R2_001.fastq
