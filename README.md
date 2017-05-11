@@ -6,7 +6,7 @@
   * [PyVCF](https://pypi.python.org/pypi/PyVCF)  
   * [Biopython](https://pypi.python.org/pypi/biopython)
   * [pybedtools](https://daler.github.io/pybedtools/)
-  * [vyvcf2](http://brentp.github.io/cyvcf2/)
+  * [cyvcf2](http://brentp.github.io/cyvcf2/)
 
 ## Usage example on Melbourne Bioinformatics (VLSCI)
 ```
