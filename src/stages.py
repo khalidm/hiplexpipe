@@ -145,6 +145,7 @@ class Stages(object):
     # coverage picard
     def target_coverage(self, bam_in, coverage_out):
         '''Calculate coverage using Picard'''
+        safe_make_dir('coverage')
         picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
                       'R={reference} BAIT_INTERVALS={interval_file} ' \
                       'TARGET_INTERVALS={interval_file}'.format(
