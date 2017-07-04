@@ -34,6 +34,8 @@ def make_pipeline(state):
         # characters.
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
         # new sample name = OHI031002-P02F04
+        # 100ng-GSP4-cy0-251_S251_L001_R2_001.fastq.gz
+        # HardSeed-4C-096_S96_L001_R1_001.fastq.gz
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
@@ -98,99 +100,67 @@ def make_pipeline(state):
         output='coverage/{sample[0]}.coverage.txt')
         .follows('sort_bam_picard'))
 
-    # # Coverage using bam
-    # (pipeline.transform(
-    #     task_func=stages.target_coverage_bamutil,
-    #     name='target_coverage_bamutil',
+    # # Apply samtools
+    # pipeline.merge(
+    #     task_func=stages.apply_samtools_mpileup,
+    #     name='apply_samtools_mpileup',
     #     input=output_from('sort_bam_picard'),
     #     # filter=suffix('.sort.bam'),
-    #     filter=formatter(
-    #         '.+/(?P<sample>[a-zA-Z0-9-_]+).sort.bam'),
-    #     output='coverage/{sample[0]}.bamutil.txt')
-    #     .follows('index_sort_bam_picard'))
+    #     #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+    #     output='variants/all.mpileup')
+    #     #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+    #     #output='variants/all.bcf')
+    #     #.follows('sort_bam_picard'))
     #
-    # # Coverage using bam with interval
+    # # Apply bcftools
     # (pipeline.transform(
-    #     task_func=stages.target_coverage_bamutil_interval,
-    #     name='target_coverage_bamutil_interval',
-    #     input=output_from('sort_bam_picard'),
-    #     # filter=suffix('.sort.bam'),
-    #     filter=formatter(
-    #         '.+/(?P<sample>[a-zA-Z0-9-_]+).sort.bam'),
-    #     output='coverage/{sample[0]}.bamutil2.txt')
-    #     .follows('index_sort_bam_picard'))
-
-    # Apply samtools
-    pipeline.merge(
-        task_func=stages.apply_samtools_mpileup,
-        name='apply_samtools_mpileup',
-        input=output_from('sort_bam_picard'),
-        # filter=suffix('.sort.bam'),
-        #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-        output='variants/all.mpileup')
-        #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-        #output='variants/all.bcf')
-        #.follows('sort_bam_picard'))
-
-    # Apply bcftools
-    (pipeline.transform(
-        task_func=stages.apply_bcftools,
-        name='apply_bcftools',
-        input=output_from('apply_samtools_mpileup'),
-        filter=suffix('.mpileup'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vcf')
-        .follows('apply_samtools_mpileup'))
-
-    # Apply NORM
-    (pipeline.transform(
-        task_func=stages.apply_vt,
-        name='apply_vt',
-        input=output_from('apply_bcftools'),
-        filter=suffix('.raw.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vt.vcf')
-        .follows('sort_bam_picard'))
-
-    # Apply VEP
-    (pipeline.transform(
-        task_func=stages.apply_vep,
-        name='apply_vep',
-        input=output_from('apply_vt'),
-        filter=suffix('.raw.vt.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vt.vep.vcf')
-        .follows('apply_vt'))
-
-    # Apply BCF
-    # (pipeline.transform(
-    #     task_func=stages.apply_bcf,
-    #     name='apply_bcf',
-    #     input=output_from('apply_vep'),
-    #     filter=suffix('.raw.vqsr.vt.vep.vcf'),
+    #     task_func=stages.apply_bcftools,
+    #     name='apply_bcftools',
+    #     input=output_from('apply_samtools_mpileup'),
+    #     filter=suffix('.mpileup'),
     #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-    #     output='.raw.vt.vep.bcf.vcf')
+    #     output='.raw.vcf')
+    #     .follows('apply_samtools_mpileup'))
+    #
+    # # Apply NORM
+    # (pipeline.transform(
+    #     task_func=stages.apply_vt,
+    #     name='apply_vt',
+    #     input=output_from('apply_bcftools'),
+    #     filter=suffix('.raw.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vt.vcf')
+    #     .follows('sort_bam_picard'))
+    #
+    # # Apply VEP
+    # (pipeline.transform(
+    #     task_func=stages.apply_vep,
+    #     name='apply_vep',
+    #     input=output_from('apply_vt'),
+    #     filter=suffix('.raw.vt.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vt.vep.vcf')
+    #     .follows('apply_vt'))
+
+    # # Apply SnpEff
+    # (pipeline.transform(
+    #     task_func=stages.apply_snpeff,
+    #     name='apply_snpeff',
+    #     input=output_from('apply_vep'),
+    #     filter=suffix('.raw.vt.vep.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vt.vep.snpeff.vcf')
     #     .follows('apply_vep'))
-
-    # Apply SnpEff
-    (pipeline.transform(
-        task_func=stages.apply_snpeff,
-        name='apply_snpeff',
-        input=output_from('apply_vep'),
-        filter=suffix('.raw.vt.vep.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vt.vep.snpeff.vcf')
-        .follows('apply_vep'))
-
-    # Apply vcfanno
-    (pipeline.transform(
-        task_func=stages.apply_vcfanno,
-        name='apply_vcfanno',
-        input=output_from('apply_snpeff'),
-        filter=suffix('.raw.vt.vep.snpeff.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.annotated.vcf')
-        .follows('apply_snpeff'))
+    #
+    # # Apply vcfanno
+    # (pipeline.transform(
+    #     task_func=stages.apply_vcfanno,
+    #     name='apply_vcfanno',
+    #     input=output_from('apply_snpeff'),
+    #     filter=suffix('.raw.vt.vep.snpeff.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.annotated.vcf')
+    #     .follows('apply_snpeff'))
 
     # Concatenate undr_rover vcf files
     pipeline.merge(
