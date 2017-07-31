@@ -51,7 +51,7 @@ class Stages(object):
         self.primer_file = self.get_options('primer_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
-        self.coverdir = self.get_options('coverdirs')
+        #self.coverdir = self.get_options('coverdirs')
         self.fragment_bed = self.get_options('fragment_bed')
         self.annolua = self.get_options('annolua')
         self.anno = self.get_options('anno')
