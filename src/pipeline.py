@@ -158,7 +158,7 @@ def make_pipeline(state):
     #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
     #     output='.raw.vt.vcf')
     #     .follows('sort_bam_picard'))
-    # 
+    #
     # # Apply VEP
     # (pipeline.transform(
     #     task_func=stages.apply_vep,
