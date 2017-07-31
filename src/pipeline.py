@@ -127,47 +127,47 @@ def make_pipeline(state):
     #     output='coverage/{sample[0]}.bamutil2.txt')
     #     .follows('index_sort_bam_picard'))
 
-    # Apply samtools
-    pipeline.merge(
-        task_func=stages.apply_samtools_mpileup,
-        name='apply_samtools_mpileup',
-        input=output_from('sort_bam_picard'),
-        # filter=suffix('.sort.bam'),
-        #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-        output='variants/all.mpileup')
-        #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-        #output='variants/all.bcf')
-        #.follows('sort_bam_picard'))
+    # # Apply samtools
+    # pipeline.merge(
+    #     task_func=stages.apply_samtools_mpileup,
+    #     name='apply_samtools_mpileup',
+    #     input=output_from('sort_bam_picard'),
+    #     # filter=suffix('.sort.bam'),
+    #     #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+    #     output='variants/all.mpileup')
+    #     #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+    #     #output='variants/all.bcf')
+    #     #.follows('sort_bam_picard'))
+    #
+    # # Apply bcftools
+    # (pipeline.transform(
+    #     task_func=stages.apply_bcftools,
+    #     name='apply_bcftools',
+    #     input=output_from('apply_samtools_mpileup'),
+    #     filter=suffix('.mpileup'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vcf')
+    #     .follows('apply_samtools_mpileup'))
 
-    # Apply bcftools
-    (pipeline.transform(
-        task_func=stages.apply_bcftools,
-        name='apply_bcftools',
-        input=output_from('apply_samtools_mpileup'),
-        filter=suffix('.mpileup'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vcf')
-        .follows('apply_samtools_mpileup'))
-
-    # Apply NORM
-    (pipeline.transform(
-        task_func=stages.apply_vt,
-        name='apply_vt',
-        input=output_from('apply_bcftools'),
-        filter=suffix('.raw.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vt.vcf')
-        .follows('sort_bam_picard'))
-
-    # Apply VEP
-    (pipeline.transform(
-        task_func=stages.apply_vep,
-        name='apply_vep',
-        input=output_from('apply_vt'),
-        filter=suffix('.raw.vt.vcf'),
-        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.vt.vep.vcf')
-        .follows('apply_vt'))
+    # # Apply NORM
+    # (pipeline.transform(
+    #     task_func=stages.apply_vt,
+    #     name='apply_vt',
+    #     input=output_from('apply_bcftools'),
+    #     filter=suffix('.raw.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vt.vcf')
+    #     .follows('sort_bam_picard'))
+    # 
+    # # Apply VEP
+    # (pipeline.transform(
+    #     task_func=stages.apply_vep,
+    #     name='apply_vep',
+    #     input=output_from('apply_vt'),
+    #     filter=suffix('.raw.vt.vcf'),
+    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.vt.vep.vcf')
+    #     .follows('apply_vt'))
 
     # Apply BCF
     # (pipeline.transform(
