@@ -124,6 +124,7 @@ class Stages(object):
                         vcf_output=vcf_output,
                         proportionthresh=self.proportionthresh,
                         absthresh=self.absthresh,
+                        maxvariants=self.maxvariants,
                         coverfile=coverfile,
                         fastq_read1=fastq_read1_in,
                         fastq_read2=fastq_read2_in)
