@@ -73,12 +73,20 @@ def make_pipeline(state):
         # The output file name is the sample name with a .bam extension.
         output='variants/undr_rover/{sample[0]}_{readid[0]}.vcf')
 
+    # Clip the primer_seq from BAM File
+    pipeline.transform(
+        task_func=stages.clip_bam,
+        name='clip_bam',
+        input=output_from('align_bwa'),
+        filter=suffix('.bam'),
+        output='.clip.bam')
+
     # Sort the BAM file using Picard
     pipeline.transform(
         task_func=stages.sort_bam_picard,
         name='sort_bam_picard',
-        input=output_from('align_bwa'),
-        filter=suffix('.bam'),
+        input=output_from('clip_bam'),
+        filter=suffix('.clip.bam'),
         output='.sort.bam')
 
     # samtools index sorted bam file
@@ -89,16 +97,51 @@ def make_pipeline(state):
         filter=suffix('.sort.bam'),
         output='.sort.bam.bai')
 
-    # Coverage using Picard
-    (pipeline.transform(
-        task_func=stages.target_coverage,
-        name='target_coverage',
+    # # Coverage using Picard
+    # (pipeline.transform(
+    #     task_func=stages.target_coverage,
+    #     name='target_coverage',
+    #     input=output_from('sort_bam_picard'),
+    #     # filter=suffix('.sort.bam'),
+    #     filter=formatter(
+    #         '.+/(?P<sample>[a-zA-Z0-9-_]+).sort.bam'),
+    #     output='coverage/{sample[0]}.coverage.txt')
+    #     .follows('sort_bam_picard'))
+
+    ###### GATK VARIANT CALLING ######
+    # Call variants using GATK
+    pipeline.transform(
+        task_func=stages.call_haplotypecaller_gatk,
+        name='call_haplotypecaller_gatk',
         input=output_from('sort_bam_picard'),
-        # filter=suffix('.sort.bam'),
-        filter=formatter(
-            '.+/(?P<sample>[a-zA-Z0-9-_]+).sort.bam'),
-        output='coverage/{sample[0]}.coverage.txt')
-        .follows('sort_bam_picard'))
+        # filter=suffix('.merged.dedup.realn.bam'),
+        filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
+        output='variants/gatk/{sample[0]}.g.vcf')
+
+    # Combine G.VCF files for all samples using GATK
+    pipeline.merge(
+        task_func=stages.combine_gvcf_gatk,
+        name='combine_gvcf_gatk',
+        input=output_from('call_haplotypecaller_gatk'),
+        output='variants/gatk/ALL.combined.vcf')
+
+    # Genotype G.VCF files using GATK
+    pipeline.transform(
+        task_func=stages.genotype_gvcf_gatk,
+        name='genotype_gvcf_gatk',
+        input=output_from('combine_gvcf_gatk'),
+        filter=suffix('.combined.vcf'),
+        output='.raw.vcf')
+
+    # Annotate VCF file using GATK
+    pipeline.transform(
+       task_func=stages.variant_annotator_gatk,
+       name='variant_annotator_gatk',
+       input=output_from('genotype_gvcf_gatk'),
+       filter=suffix('.raw.vcf'),
+       output='.raw.annotate.vcf')
+    ###### GATK VARIANT CALLING ######
+
 
     # # Apply samtools
     # pipeline.merge(

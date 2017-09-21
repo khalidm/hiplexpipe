@@ -43,12 +43,14 @@ class Stages(object):
         # self.interval_hg19 = self.get_options('exome_bed_hg19')
         # self.CEU_mergeGvcf = self.get_options('CEU_mergeGvcf')
         self.snpeff_conf = self.get_options('snpeff_conf')
+        self.bamclipper = self.get_options('bamclipper')
         self.vep_path = self.get_options('vep_path')
         self.vt_path = self.get_options('vt_path')
         self.coord_file = self.get_options('coord_file')
         self.target_bed = self.get_options('target_bed')
         self.interval_file = self.get_options('interval_file')
         self.primer_file = self.get_options('primer_file')
+        self.primer_bedpe_file = self.get_options('primer_bedpe_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
         self.maxvariants = self.get_options('maxvariants')
@@ -130,6 +132,13 @@ class Stages(object):
                         fastq_read2=fastq_read2_in)
         run_stage(self.state, 'apply_undr_rover', command)
 
+    def clip_bam(self, bam_in, sorted_bam_out):
+        '''Clip the BAM file using Bamclipper'''
+        bamclipper.sh -b HardSeed1C-039_S39.sort.primary2.bam -p 4genes_621716iii.final.rover.primers.bedpe
+        bamclipper_args = '{bamclipper} -b {bam_in} -p {primer_bedpe_file} -n 1'.format(
+                          bamclipper=self.bamclipper, bam_in=bam_in, primer_bedpe_file=self.primer_bedpe_file)
+        self.run_stage('clip_bam', bamclipper_args)
+
     def sort_bam_picard(self, bam_in, sorted_bam_out):
         '''Sort the BAM file using Picard'''
         picard_args = 'SortSam INPUT={bam_in} OUTPUT={sorted_bam_out} ' \
@@ -144,6 +153,73 @@ class Stages(object):
         command = 'samtools index {bam_in} {bam_index}'.format(
                           bam_in=bam_in, bam_index=bam_index)
         run_stage(self.state, 'index_sort_bam_picard', command)
+
+    ##########
+    def call_haplotypecaller_gatk(self, bam_in, vcf_out):
+        '''Call variants using GATK'''
+        safe_make_dir('variants/gatk')
+        # safe_make_dir('variants}'.format(sample=sample_id))
+        gatk_args = "-T HaplotypeCaller -R {reference} --min_base_quality_score 20 " \
+                    "--emitRefConfidence GVCF " \
+                    "-A AlleleBalance -A AlleleBalanceBySample " \
+                    "-A ChromosomeCounts -A ClippingRankSumTest " \
+                    "-A Coverage -A DepthPerAlleleBySample " \
+                    "-A DepthPerSampleHC -A FisherStrand " \
+                    "-A GCContent -A GenotypeSummaries " \
+                    "-A HardyWeinberg -A HomopolymerRun " \
+                    "-A LikelihoodRankSumTest -A LowMQ " \
+                    "-A MappingQualityRankSumTest -A MappingQualityZero " \
+                    "-A QualByDepth " \
+                    "-A RMSMappingQuality -A ReadPosRankSumTest " \
+                    "-A SampleList -A SpanningDeletions " \
+                    "-A StrandBiasBySample -A StrandOddsRatio " \
+                    "-A TandemRepeatAnnotator -A VariantType " \
+                    "-I {bam} -L {interval_list} -o {out}".format(reference=self.reference,
+                                                                  bam=bam_in, interval_list=self.interval_hg19, out=vcf_out)
+        self.run_gatk('call_haplotypecaller_gatk', gatk_args)
+
+    def combine_gvcf_gatk(self, vcf_files_in, vcf_out):
+        '''Combine G.VCF files for all samples using GATK'''
+        g_vcf_files = ' '.join(['--variant ' + vcf for vcf in vcf_files_in])
+        gatk_args = "-T CombineGVCFs -R {reference} " \
+                    "--disable_auto_index_creation_and_locking_when_reading_rods " \
+                    "{g_vcf_files} -o {vcf_out}".format(reference=self.reference,
+                                                        g_vcf_files=g_vcf_files, vcf_out=vcf_out)
+        self.run_gatk('combine_gvcf_gatk', gatk_args)
+
+    def genotype_gvcf_gatk(self, combined_vcf_in, vcf_out):
+        '''Genotype G.VCF files using GATK'''
+        cores = self.get_stage_options('genotype_gvcf_gatk', 'cores')
+        gatk_args = "-T GenotypeGVCFs -R {reference} " \
+                    "--disable_auto_index_creation_and_locking_when_reading_rods " \
+                    "--dbsnp {dbsnp} " \
+                    "--num_threads {cores} --variant {combined_vcf} --out {vcf_out}" \
+                    .format(reference=self.reference, dbsnp=self.dbsnp_hg19,
+                            cores=cores, combined_vcf=combined_vcf_in, vcf_out=vcf_out)
+        self.run_gatk('genotype_gvcf_gatk', gatk_args)
+
+    def variant_annotator_gatk(self, vcf_in, vcf_out):
+        '''Annotate G.VCF files using GATK'''
+        cores = self.get_stage_options('variant_annotator_gatk', 'cores')
+        gatk_args = "-T VariantAnnotator -R {reference} " \
+                    "--disable_auto_index_creation_and_locking_when_reading_rods " \
+                    "-A AlleleBalance -A AlleleBalanceBySample " \
+                    "-A ChromosomeCounts -A ClippingRankSumTest " \
+                    "-A Coverage -A DepthPerAlleleBySample " \
+                    "-A DepthPerSampleHC -A FisherStrand " \
+                    "-A GCContent -A GenotypeSummaries " \
+                    "-A HardyWeinberg -A HomopolymerRun " \
+                    "-A LikelihoodRankSumTest " \
+                    "-A MappingQualityRankSumTest -A MappingQualityZero " \
+                    "-A QualByDepth " \
+                    "-A RMSMappingQuality -A ReadPosRankSumTest " \
+                    "-A SampleList -A SpanningDeletions " \
+                    "-A StrandBiasBySample -A StrandOddsRatio " \
+                    "-A TandemRepeatAnnotator -A VariantType " \
+                    "--num_threads {cores} --variant {vcf_in} --out {vcf_out}" \
+                    .format(reference=self.reference, cores=cores, vcf_in=vcf_in, vcf_out=vcf_out)
+        self.run_gatk('variant_annotator_gatk', gatk_args)
+    ###########
 
     # coverage picard
     def target_coverage(self, bam_in, coverage_out):
