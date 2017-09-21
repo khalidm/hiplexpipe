@@ -249,12 +249,12 @@ def make_pipeline(state):
         .follows('index_sort_bam_picard'))
 
     # Apply summarize picard coverage
-    (pipeline.merge(
-        task_func=stages.apply_summarize_picard,
-        name='apply_summarize_picard',
-        input=output_from('target_coverage'),
-        output='coverage/all.hsmetrics.txt')
-        .follows('target_coverage'))
+    # (pipeline.merge(
+    #     task_func=stages.apply_summarize_picard,
+    #     name='apply_summarize_picard',
+    #     input=output_from('target_coverage'),
+    #     output='coverage/all.hsmetrics.txt')
+    #     .follows('target_coverage'))
 
     # Apply summarize multicov coverage plots
     (pipeline.merge(
