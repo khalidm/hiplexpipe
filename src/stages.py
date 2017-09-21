@@ -133,10 +133,10 @@ class Stages(object):
         run_stage(self.state, 'apply_undr_rover', command)
 
     def clip_bam(self, bam_in, sorted_bam_out):
-        '''Clip the BAM file using Bamclipper'''        
+        '''Clip the BAM file using Bamclipper'''
         bamclipper_args = '{bamclipper} -b {bam_in} -p {primer_bedpe_file} -n 1'.format(
                           bamclipper=self.bamclipper, bam_in=bam_in, primer_bedpe_file=self.primer_bedpe_file)
-        self.run_stage('clip_bam', bamclipper_args)
+        run_stage('clip_bam', bamclipper_args)
 
     def sort_bam_picard(self, bam_in, sorted_bam_out):
         '''Sort the BAM file using Picard'''
@@ -174,7 +174,7 @@ class Stages(object):
                     "-A StrandBiasBySample -A StrandOddsRatio " \
                     "-A TandemRepeatAnnotator -A VariantType " \
                     "-I {bam} -L {interval_list} -o {out}".format(reference=self.reference,
-                                                                  bam=bam_in, interval_list=self.interval_hg19, out=vcf_out)
+                                                                  bam=bam_in, interval_list=self.interval_file, out=vcf_out)
         self.run_gatk('call_haplotypecaller_gatk', gatk_args)
 
     def combine_gvcf_gatk(self, vcf_files_in, vcf_out):
