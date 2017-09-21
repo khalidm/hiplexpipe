@@ -133,8 +133,7 @@ class Stages(object):
         run_stage(self.state, 'apply_undr_rover', command)
 
     def clip_bam(self, bam_in, sorted_bam_out):
-        '''Clip the BAM file using Bamclipper'''
-        bamclipper.sh -b HardSeed1C-039_S39.sort.primary2.bam -p 4genes_621716iii.final.rover.primers.bedpe
+        '''Clip the BAM file using Bamclipper'''        
         bamclipper_args = '{bamclipper} -b {bam_in} -p {primer_bedpe_file} -n 1'.format(
                           bamclipper=self.bamclipper, bam_in=bam_in, primer_bedpe_file=self.primer_bedpe_file)
         self.run_stage('clip_bam', bamclipper_args)
