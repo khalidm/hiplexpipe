@@ -240,13 +240,13 @@ def make_pipeline(state):
         output='.vep.anno.snpeff.vcf')
         .follows('apply_vcfanno_ur'))
 
-    # Apply summarize multi coverage
-    (pipeline.merge(
-        task_func=stages.apply_multicov,
-        name='apply_multicov',
-        input=output_from('sort_bam_picard'),
-        output='coverage/all.multicov.txt')
-        .follows('index_sort_bam_picard'))
+    # # Apply summarize multi coverage
+    # (pipeline.merge(
+    #     task_func=stages.apply_multicov,
+    #     name='apply_multicov',
+    #     input=output_from('sort_bam_picard'),
+    #     output='coverage/all.multicov.txt')
+    #     .follows('index_sort_bam_picard'))
 
     # Apply summarize picard coverage
     # (pipeline.merge(
