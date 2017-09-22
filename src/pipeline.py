@@ -87,7 +87,7 @@ def make_pipeline(state):
         name='index_bam',
         input=output_from('sort_bam_picard'),
         filter=suffix('.sort.bam'),
-        output='.bam.bai')
+        output='.sort.bam.bai')
 
     # Clip the primer_seq from BAM File
     (pipeline.transform(
