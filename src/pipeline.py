@@ -73,38 +73,46 @@ def make_pipeline(state):
         # The output file name is the sample name with a .bam extension.
         output='variants/undr_rover/{sample[0]}_{readid[0]}.vcf')
 
+    # Sort the BAM file using Picard
+    pipeline.transform(
+        task_func=stages.sort_bam_picard,
+        name='sort_bam_picard',
+        input=output_from('align_bwa'),
+        filter=suffix('.bam'),
+        output='.sort.bam')
+
     # index bam file
     pipeline.transform(
         task_func=stages.index_sort_bam_picard,
         name='index_bam',
-        input=output_from('align_bwa'),
-        filter=suffix('.bam'),
+        input=output_from('sort_bam_picard'),
+        filter=suffix('.sort.bam'),
         output='.bam.bai')
 
     # Clip the primer_seq from BAM File
     (pipeline.transform(
         task_func=stages.clip_bam,
         name='clip_bam',
-        input=output_from('align_bwa'),
+        input=output_from('sort_bam_picard'),
         filter=suffix('.bam'),
         output='.clip.bam')
         .follows('index_bam'))
 
-    # Sort the BAM file using Picard
-    pipeline.transform(
-        task_func=stages.sort_bam_picard,
-        name='sort_bam_picard',
-        input=output_from('clip_bam'),
-        filter=suffix('.clip.bam'),
-        output='.sort.bam')
+    # # Sort the BAM file using Picard
+    # pipeline.transform(
+    #     task_func=stages.sort_bam_picard,
+    #     name='sort_bam_picard',
+    #     input=output_from('clip_bam'),
+    #     filter=suffix('.clip.bam'),
+    #     output='.sort.bam')
 
     # samtools index sorted bam file
     pipeline.transform(
         task_func=stages.index_sort_bam_picard,
         name='index_sort_bam_picard',
-        input=output_from('sort_bam_picard'),
-        filter=suffix('.sort.bam'),
-        output='.sort.bam.bai')
+        input=output_from('clip_bam'),
+        filter=suffix('.clip.bam'),
+        output='.clip.bam.bai')
 
     # # Coverage using Picard
     # (pipeline.transform(
