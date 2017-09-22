@@ -73,13 +73,22 @@ def make_pipeline(state):
         # The output file name is the sample name with a .bam extension.
         output='variants/undr_rover/{sample[0]}_{readid[0]}.vcf')
 
-    # Clip the primer_seq from BAM File
+    # index bam file
     pipeline.transform(
+        task_func=stages.index_sort_bam_picard,
+        name='index_bam',
+        input=output_from('align_bwa'),
+        filter=suffix('.bam'),
+        output='.bam.bai')
+
+    # Clip the primer_seq from BAM File
+    (pipeline.transform(
         task_func=stages.clip_bam,
         name='clip_bam',
         input=output_from('align_bwa'),
         filter=suffix('.bam'),
         output='.clip.bam')
+        .follows('index_bam'))
 
     # Sort the BAM file using Picard
     pipeline.transform(
