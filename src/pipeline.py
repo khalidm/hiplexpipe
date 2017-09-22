@@ -106,13 +106,13 @@ def make_pipeline(state):
     #     filter=suffix('.clip.bam'),
     #     output='.sort.bam')
 
-    # samtools index sorted bam file
-    pipeline.transform(
-        task_func=stages.index_sort_bam_picard,
-        name='index_sort_bam_picard',
-        input=output_from('clip_bam'),
-        filter=suffix('.primerclipped.bam'),
-        output='.primerclipped.bam.bai')
+    # # samtools index sorted bam file
+    # pipeline.transform(
+    #     task_func=stages.index_sort_bam_picard,
+    #     name='index_sort_bam_picard',
+    #     input=output_from('clip_bam'),
+    #     filter=suffix('.primerclipped.bam'),
+    #     output='.primerclipped.bam.bai')
 
     # # Coverage using Picard
     # (pipeline.transform(
@@ -127,14 +127,14 @@ def make_pipeline(state):
 
     ###### GATK VARIANT CALLING ######
     # Call variants using GATK
-    (pipeline.transform(
+    pipeline.transform(
         task_func=stages.call_haplotypecaller_gatk,
         name='call_haplotypecaller_gatk',
         input=output_from('clip_bam'),
         # filter=suffix('.merged.dedup.realn.bam'),
         filter=formatter('.+/(?P<sample>[a-zA-Z0-9-_]+).sort.primerclipped.bam'),
         output='variants/gatk/{sample[0]}.g.vcf')
-        .follows('index_sort_bam_picard'))
+        # .follows('index_sort_bam_picard'))
 
     # Combine G.VCF files for all samples using GATK
     pipeline.merge(
