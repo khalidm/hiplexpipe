@@ -81,13 +81,21 @@ def make_pipeline(state):
         filter=suffix('.bam'),
         output='.sort.bam')
 
+    # High quality and primary alignments
+    pipeline.transform(
+        task_func=stages.primary_bam,
+        name='primary_bam',
+        input=output_from('align_bwa'),
+        filter=suffix('sort.bam'),
+        output='.primary.bam')
+
     # index bam file
     pipeline.transform(
         task_func=stages.index_sort_bam_picard,
         name='index_bam',
-        input=output_from('sort_bam_picard'),
-        filter=suffix('.sort.bam'),
-        output='.sort.bam.bai')
+        input=output_from('primary_bam'),
+        filter=suffix('.primary.bam'),
+        output='.primary.bam.bai')
 
     # Clip the primer_seq from BAM File
     (pipeline.transform(
@@ -158,70 +166,99 @@ def make_pipeline(state):
        input=output_from('genotype_gvcf_gatk'),
        filter=suffix('.raw.vcf'),
        output='.raw.annotate.vcf')
+
+    # ------- RECAL
+    # SNP recalibration using GATK
+    pipeline.transform(
+        task_func=stages.snp_recalibrate_gatk,
+        name='snp_recalibrate_gatk',
+        input=output_from('variant_annotator_gatk'),
+        filter=suffix('.raw.annotate.vcf'),
+        output=['.snp_recal', '.snp_tranches', '.snp_plots.R'])
+
+    # Apply SNP recalibration using GATK
+    (pipeline.transform(
+        task_func=stages.apply_snp_recalibrate_gatk,
+        name='apply_snp_recalibrate_gatk',
+        input=output_from('variant_annotator_gatk'),
+        filter=suffix('.raw.annotate.vcf'),
+        add_inputs=add_inputs(['variants/ALL.snp_recal', 'variants/ALL.snp_tranches']),
+        output='.recal_SNP.vcf')
+        .follows('snp_recalibrate_gatk'))
+
+    # INDEL recalibration using GATK
+    pipeline.transform(
+        task_func=stages.indel_recalibrate_gatk,
+        name='indel_recalibrate_gatk',
+        input=output_from('apply_snp_recalibrate_gatk'),
+        filter=suffix('.recal_SNP.vcf'),
+        output=['.indel_recal', '.indel_tranches', '.indel_plots.R'])
+
+    # Apply INDEL recalibration using GATK
+    (pipeline.transform(
+        task_func=stages.apply_indel_recalibrate_gatk,
+        name='apply_indel_recalibrate_gatk',
+        input=output_from('apply_snp_recalibrate_gatk'),
+        filter=suffix('.recal_SNP.vcf'),
+        add_inputs=add_inputs(
+            ['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.raw.annotate.vqsr.vcf')
+        .follows('indel_recalibrate_gatk'))
+
+    # Apply VariantFiltration using GATK
+    (pipeline.transform(
+        task_func=stages.apply_variant_filtration_gatk_lenient,
+        name='apply_variant_filtration_gatk_lenient',
+        input=output_from('apply_indel_recalibrate_gatk'),
+        filter=suffix('.raw.annotate.vqsr.vcf'),
+        output='.raw.annotate.vqsr.filtered_lenient.vcf')
+        .follows('apply_indel_recalibrate_gatk'))
+
+    # ------- RECAL
+
+    # -------- VEP ----------
+    # Apply NORM
+    (pipeline.transform(
+        task_func=stages.apply_vt,
+        name='apply_vt',
+        input=output_from('variant_annotator_gatk'),
+        filter=suffix('.raw.annotate.vqsr.filtered_lenient.vcf'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.raw.annotate.vqsr.filtered_lenient.norm.vcf')
+        .follows('sort_bam_picard'))
+
+    # Apply VEP
+    (pipeline.transform(
+        task_func=stages.apply_vep,
+        name='apply_vep',
+        input=output_from('apply_vt'),
+        filter=suffix('.raw.annotate.vqsr.filtered_lenient.norm.vcf'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.raw.annotate.vqsr.filtered_lenient.norm.vep.vcf')
+        .follows('apply_vt'))
+
+    # Apply SnpEff
+    (pipeline.transform(
+        task_func=stages.apply_snpeff,
+        name='apply_snpeff',
+        input=output_from('apply_vep'),
+        filter=suffix('.raw.annotate.vqsr.filtered_lenient.norm.vep.vcf'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.raw.annotate.vqsr.filtered_lenient.norm.vep.snpeff.vcf')
+        .follows('apply_vep'))
+
+    # Apply vcfanno
+    (pipeline.transform(
+        task_func=stages.apply_vcfanno,
+        name='apply_vcfanno',
+        input=output_from('apply_snpeff'),
+        filter=suffix('.raw.annotate.vqsr.filtered_lenient.norm.vep.snpeff.vcf'),
+        # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+        output='.annotated.vcf')
+        .follows('apply_snpeff'))
+
+    # -------- VEP ----------
     ###### GATK VARIANT CALLING ######
-
-
-    # # Apply samtools
-    # pipeline.merge(
-    #     task_func=stages.apply_samtools_mpileup,
-    #     name='apply_samtools_mpileup',
-    #     input=output_from('sort_bam_picard'),
-    #     # filter=suffix('.sort.bam'),
-    #     #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-    #     output='variants/all.mpileup')
-    #     #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-]+).sort.bam'),
-    #     #output='variants/all.bcf')
-    #     #.follows('sort_bam_picard'))
-    #
-    # # Apply bcftools
-    # (pipeline.transform(
-    #     task_func=stages.apply_bcftools,
-    #     name='apply_bcftools',
-    #     input=output_from('apply_samtools_mpileup'),
-    #     filter=suffix('.mpileup'),
-    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-    #     output='.raw.vcf')
-    #     .follows('apply_samtools_mpileup'))
-    #
-    # # Apply NORM
-    # (pipeline.transform(
-    #     task_func=stages.apply_vt,
-    #     name='apply_vt',
-    #     input=output_from('apply_bcftools'),
-    #     filter=suffix('.raw.vcf'),
-    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-    #     output='.raw.vt.vcf')
-    #     .follows('sort_bam_picard'))
-    #
-    # # Apply VEP
-    # (pipeline.transform(
-    #     task_func=stages.apply_vep,
-    #     name='apply_vep',
-    #     input=output_from('apply_vt'),
-    #     filter=suffix('.raw.vt.vcf'),
-    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-    #     output='.raw.vt.vep.vcf')
-    #     .follows('apply_vt'))
-
-    # # Apply SnpEff
-    # (pipeline.transform(
-    #     task_func=stages.apply_snpeff,
-    #     name='apply_snpeff',
-    #     input=output_from('apply_vep'),
-    #     filter=suffix('.raw.vt.vep.vcf'),
-    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-    #     output='.raw.vt.vep.snpeff.vcf')
-    #     .follows('apply_vep'))
-    #
-    # # Apply vcfanno
-    # (pipeline.transform(
-    #     task_func=stages.apply_vcfanno,
-    #     name='apply_vcfanno',
-    #     input=output_from('apply_snpeff'),
-    #     filter=suffix('.raw.vt.vep.snpeff.vcf'),
-    #     # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-    #     output='.annotated.vcf')
-    #     .follows('apply_snpeff'))
 
     # Concatenate undr_rover vcf files
     pipeline.merge(
