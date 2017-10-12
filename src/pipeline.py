@@ -294,6 +294,14 @@ def make_pipeline(state):
         output='.vep.anno.snpeff.vcf')
         .follows('apply_vcfanno_ur'))
 
+    # Apply HomopolymerRun
+    pipeline.transform(
+        task_func=stages.apply_homopolymer_snpeff,
+        name='apply_homopolymer_snpeff',
+        input=output_from('apply_snpeff_ur'),
+        filter=suffix('.vep.anno.snpeff.vcf'),
+        output='.annotated.vcf')
+
     # Apply summarize multi coverage
     (pipeline.merge(
         task_func=stages.apply_multicov,
