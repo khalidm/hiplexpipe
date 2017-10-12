@@ -85,7 +85,7 @@ def make_pipeline(state):
     pipeline.transform(
         task_func=stages.primary_bam,
         name='primary_bam',
-        input=output_from('align_bwa'),
+        input=output_from('sort_bam_picard'),
         filter=suffix('sort.bam'),
         output='.primary.bam')
 

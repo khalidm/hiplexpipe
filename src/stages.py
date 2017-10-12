@@ -146,6 +146,13 @@ class Stages(object):
                           bam_in=bam_in, sorted_bam_out=sorted_bam_out)
         self.run_picard('sort_bam_picard', picard_args)
 
+    def primary_bam(self, bam_in, sbam_out):
+        '''On keep primary alignments in the BAM file using samtools'''
+        command = 'samtools view -h -q 1 -f 2 -F 4 -F 8 -F 256 -b ' \
+                    '-o {sbam_out} {bam_in}'.format(
+                        bam_in=bam_in, sbam_out=sbam_out)
+        run_stage(self.state, 'primary_bam', command)
+
     # index sorted bam file
     def index_sort_bam_picard(self, bam_in, bam_index):
         '''Index sorted bam using samtools'''
