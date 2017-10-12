@@ -296,8 +296,8 @@ def make_pipeline(state):
 
     # Apply HomopolymerRun
     pipeline.transform(
-        task_func=stages.apply_homopolymer_snpeff,
-        name='apply_homopolymer_snpeff',
+        task_func=stages.apply_homopolymer_ann,
+        name='apply_homopolymer_ann',
         input=output_from('apply_snpeff_ur'),
         filter=suffix('.vep.anno.snpeff.vcf'),
         output='.annotated.vcf')

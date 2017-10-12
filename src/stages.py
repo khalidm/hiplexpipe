@@ -58,6 +58,7 @@ class Stages(object):
         self.fragment_bed = self.get_options('fragment_bed')
         self.annolua = self.get_options('annolua')
         self.anno = self.get_options('anno')
+        self.hrfile = self.get_options('hrfile')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
@@ -454,6 +455,15 @@ class Stages(object):
         vcfs = ' '.join([vcf for vcf in inputs])
         # safe_make_dir('variants')
         command = 'vcf-concat {vcfs} | vcf-sort -c | bgzip -c > {vcf_out} '.format(vcfs=vcfs,vcf_out=vcf_out)
+        run_stage(self.state, 'apply_cat_vcf', command)
+
+    def apply_homopolymer_ann(self, inputs, vcf_out):
+        '''Apply HomopolymerRun annotation to undr_rover output'''
+        vcf_in = inputs
+        # safe_make_dir('variants')
+        command = "bcftools annotate -a {hrfile} -c CHROM,FROM,TO,HRUN " \
+                    "-h <(echo '##INFO=<ID=HRUN,Number=1,Type=String,Description=\"HRun\">') " \
+                    "{vcf_in} > {vcf_out}".format(hrfile=self.hrfile,vcf_in=vcf_in,vcf_out=vcf_out)
         run_stage(self.state, 'apply_cat_vcf', command)
 
     # def apply_cat_vcf(self, inputs, vcf_out):
