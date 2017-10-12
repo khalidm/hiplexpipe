@@ -101,8 +101,8 @@ def make_pipeline(state):
     (pipeline.transform(
         task_func=stages.clip_bam,
         name='clip_bam',
-        input=output_from('sort_bam_picard'),
-        filter=suffix('.bam'),
+        input=output_from('primary_bam'),
+        filter=suffix('.primary.bam'),
         output='.primerclipped.bam')
         .follows('index_bam'))
 
