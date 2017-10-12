@@ -311,9 +311,9 @@ class Stages(object):
                     "--filterExpression \"QUAL < 30.0\" --filterName \"VeryLowQual\" " \
                     "--filterExpression \"QD < 2.0\" --filterName \"LowQD\" " \
                     "--filterExpression \"DP < 10\" --filterName \"LowCoverage\" " \
-                    "--filterExpression \"MQ < 40\" --filterName \"LowMappingQual\" " \
+                    "--filterExpression \"MQ < 30\" --filterName \"LowMappingQual\" " \
                     "--filterExpression \"SOR > 4.0\" --filterName \"StrandBias\" " \
-                    "--filterExpression \"HRun > 12.0\" --filterName \"HRun12\" " \
+                    "--filterExpression \"HRun >= 7.0\" --filterName \"HRun7\" " \
                     "--filterExpression \"MQRankSum < -12.5\" --filterName \"MQRankSum\" " \
                     "--filterExpression \"ReadPosRankSum < -8.0\" --filterName \"ReadPosRankSum\" " \
                     "--clusterWindowSize 15 " \

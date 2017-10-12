@@ -221,11 +221,11 @@ def make_pipeline(state):
     (pipeline.transform(
         task_func=stages.apply_vt,
         name='apply_vt',
-        input=output_from('variant_annotator_gatk'),
+        input=output_from('apply_variant_filtration_gatk_lenient'),
         filter=suffix('.raw.annotate.vqsr.filtered_lenient.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='.raw.annotate.vqsr.filtered_lenient.norm.vcf')
-        .follows('sort_bam_picard'))
+        .follows('apply_variant_filtration_gatk_lenient'))
 
     # Apply VEP
     (pipeline.transform(
