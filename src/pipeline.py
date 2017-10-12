@@ -298,7 +298,7 @@ def make_pipeline(state):
     (pipeline.merge(
         task_func=stages.apply_multicov,
         name='apply_multicov',
-        input=output_from('sort_bam_picard'),
+        input=output_from('primary_bam'),
         output='coverage/all.multicov.txt')
         .follows('index_sort_bam_picard'))
 
