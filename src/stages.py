@@ -355,7 +355,7 @@ class Stages(object):
         '''Samtools mpileup'''
         # bam_in = bam_in
         bams = ' '.join([bam for bam in bam_in])
-        # safe_make_dir('variants')
+        safe_make_dir('coverage')
         command = 'bedtools multicov -bams {bams} -bed {target_bed} > {multicov}'.format(
                           bams=bams, target_bed=self.target_bed, multicov=multicov)
         run_stage(self.state, 'apply_multicov', command)
