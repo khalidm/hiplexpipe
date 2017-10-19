@@ -307,7 +307,7 @@ def make_pipeline(state):
         task_func=stages.apply_multicov,
         name='apply_multicov',
         input=output_from('primary_bam'),
-        filter=suffix('.primary.bam'),
+        # filter=suffix('.primary.bam'),
         output='coverage/all.multicov.txt')
         .follows('index_bam'))
 
