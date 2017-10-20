@@ -103,7 +103,7 @@ def make_pipeline(state):
         name='clip_bam',
         input=output_from('primary_bam'),
         filter=suffix('.primary.bam'),
-        output='.primerclipped.bam')
+        output='.primary.primerclipped.bam')
         .follows('index_bam'))
 
     # # Sort the BAM file using Picard
@@ -140,7 +140,7 @@ def make_pipeline(state):
         name='call_haplotypecaller_gatk',
         input=output_from('clip_bam'),
         # filter=suffix('.merged.dedup.realn.bam'),
-        filter=formatter('.+/(?P<sample>[a-zA-Z0-9-_]+).primerclipped.bam'),
+        filter=formatter('.+/(?P<sample>[a-zA-Z0-9-_]+).primary.primerclipped.bam'),
         output='variants/gatk/{sample[0]}.g.vcf')
         # .follows('index_sort_bam_picard'))
 
