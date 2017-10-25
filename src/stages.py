@@ -59,6 +59,7 @@ class Stages(object):
         self.annolua = self.get_options('annolua')
         self.anno = self.get_options('anno')
         self.hrfile = self.get_options('hrfile')
+        self.other_vep = self.get_options('other_vep')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
@@ -415,13 +416,13 @@ class Stages(object):
         '''Apply VEP'''
         vcf_in = inputs
         cores = self.get_stage_options('apply_vep', 'cores')
-        vep_command = "{vep_path}/variant_effect_predictor.pl --cache --refseq --offline --fasta {reference} " \
+        vep_command = "{vep_path}/variant_effect_predictor.pl --cache --refseq --offline {other_vep} --fasta {reference} " \
                     "-i {vcf_in} --sift b --polyphen b --symbol --numbers --biotype --total_length --hgvs " \
                     "--format vcf -o {vcf_vep} --force_overwrite --vcf " \
                     "--fields Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT," \
                     "Protein_position,BIOTYPE,HGVSc,HGVSp,cDNA_position,CDS_position,HGVSc,HGVSp,cDNA_position,CDS_position,PICK " \
                     "--fork {threads} --flag_pick".format(
-                    reference=self.reference, vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out, threads=cores)
+                    reference=self.reference, vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out, other_vep=self.other_vep, threads=cores)
         run_stage(self.state, 'apply_vep', vep_command)
 
     def apply_bcf(self, inputs, vcf_out):
