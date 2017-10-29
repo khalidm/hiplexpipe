@@ -436,11 +436,23 @@ class Stages(object):
     def apply_snpeff(self, inputs, vcf_out):
         '''Apply SnpEFF'''
         vcf_in = inputs
-        #cores = self.get_stage_options('apply_snpeff', 'cores')
-        snpeff_command = "eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
-                    snpeff_conf=self.snpeff_conf, vcf_in=vcf_in, vcf_out=vcf_out)
-        self.run_snpeff('apply_snpeff', snpeff_command)
+        #cores = self.get_stage_options('apply_snpeff', 'cores')  apply_snpeff
+        # mem = int(self.state.config.get_stage_options(stage, 'mem'))
+        mem = int(self.get_stage_options('apply_snpeff', 'mem')) - 2
+        snpeff_command = "java -Xmx{mem} -jar {snpeff_path} eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
+                    mem=mem, snpeff_path=self.snpeff_path, snpeff_conf=self.snpeff_conf, vcf_in=vcf_in, vcf_out=vcf_out)
+        self.run_stage('apply_snpeff', snpeff_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
+
+    # ORIGINAL WITH RUN_JAVA
+    # def apply_snpeff(self, inputs, vcf_out):
+    #     '''Apply SnpEFF'''
+    #     vcf_in = inputs
+    #     #cores = self.get_stage_options('apply_snpeff', 'cores')
+    #     snpeff_command = "eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
+    #                 snpeff_conf=self.snpeff_conf, vcf_in=vcf_in, vcf_out=vcf_out)
+    #     self.run_snpeff('apply_snpeff', snpeff_command)
+    #     #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
 
     def apply_vcfanno(self, inputs, vcf_out):
         '''Apply anno'''
@@ -449,7 +461,6 @@ class Stages(object):
         anno_command = "./vcfanno_linux64 -lua {annolua} {anno} {vcf_in} > {vcf_out}".format(
                     annolua=self.annolua, anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
         run_stage(self.state, 'apply_vcfanno', anno_command)
-        #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
 
     def apply_cat_vcf(self, inputs, vcf_out):
         '''Concatenate and sort undr_rover VCF files for downstream analysis'''
