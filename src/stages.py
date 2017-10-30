@@ -60,7 +60,7 @@ class Stages(object):
         self.anno = self.get_options('anno')
         self.hrfile = self.get_options('hrfile')
         self.other_vep = self.get_options('other_vep')
-        self.snpeff_path: self.get_options('snpeff_path')
+        self.snpeff_path = self.get_options('snpeff_path')
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
