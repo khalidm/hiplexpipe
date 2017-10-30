@@ -206,13 +206,12 @@ def make_pipeline(state):
     #     .follows('indel_recalibrate_gatk'))
 
     # Apply VariantFiltration using GATK
-    (pipeline.transform(
+    pipeline.transform(
         task_func=stages.apply_variant_filtration_gatk_lenient,
         name='apply_variant_filtration_gatk_lenient',
         input=output_from('variant_annotator_gatk'),
-        filter=suffix('.raw.annotate.vqsr.vcf'),
-        output='.raw.annotate.vqsr.filtered_lenient.vcf')
-        .follows('apply_indel_recalibrate_gatk'))
+        filter=suffix('.raw.annotate.vcf'),
+        output='.raw.annotate.filtered_lenient.vcf'
 
     # ------- RECAL
 
@@ -222,9 +221,9 @@ def make_pipeline(state):
         task_func=stages.apply_vt,
         name='apply_vt',
         input=output_from('apply_variant_filtration_gatk_lenient'),
-        filter=suffix('.raw.annotate.vqsr.filtered_lenient.vcf'),
+        filter=suffix('.raw.annotate.filtered_lenient.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.annotate.vqsr.filtered_lenient.norm.vcf')
+        output='.raw.annotate.filtered_lenient.norm.vcf')
         .follows('apply_variant_filtration_gatk_lenient'))
 
     # Apply VEP
@@ -232,9 +231,9 @@ def make_pipeline(state):
         task_func=stages.apply_vep,
         name='apply_vep',
         input=output_from('apply_vt'),
-        filter=suffix('.raw.annotate.vqsr.filtered_lenient.norm.vcf'),
+        filter=suffix('.raw.annotate.filtered_lenient.norm.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.annotate.vqsr.filtered_lenient.norm.vep.vcf')
+        output='.raw.annotate.filtered_lenient.norm.vep.vcf')
         .follows('apply_vt'))
 
     # Apply SnpEff
@@ -242,9 +241,9 @@ def make_pipeline(state):
         task_func=stages.apply_snpeff,
         name='apply_snpeff',
         input=output_from('apply_vep'),
-        filter=suffix('.raw.annotate.vqsr.filtered_lenient.norm.vep.vcf'),
+        filter=suffix('.raw.annotate.filtered_lenient.norm.vep.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.annotate.vqsr.filtered_lenient.norm.vep.snpeff.vcf')
+        output='.raw.annotate.filtered_lenient.norm.vep.snpeff.vcf')
         .follows('apply_vep'))
 
     # Apply vcfanno
@@ -252,7 +251,7 @@ def make_pipeline(state):
         task_func=stages.apply_vcfanno,
         name='apply_vcfanno',
         input=output_from('apply_snpeff'),
-        filter=suffix('.raw.annotate.vqsr.filtered_lenient.norm.vep.snpeff.vcf'),
+        filter=suffix('.raw.annotate.filtered_lenient.norm.vep.snpeff.vcf'),
         # add_inputs=add_inputs(['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
         output='.annotated.vcf')
         .follows('apply_snpeff'))
