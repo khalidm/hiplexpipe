@@ -293,13 +293,22 @@ def make_pipeline(state):
         output='.vep.anno.snpeff.vcf')
         .follows('apply_vcfanno_ur'))
 
-    # Apply HomopolymerRun
+    # Apply tabix
     pipeline.transform(
+        task_func=stages.apply_bgzip,
+        name='apply_tabix',
+        input=output_from('apply_snpeff_ur'),
+        filter=suffix('.vep.anno.vcf.gz'),
+        output='.vep.anno.snpeff.vcf.gz.tbi')
+
+    # Apply HomopolymerRun
+    (pipeline.transform(
         task_func=stages.apply_homopolymer_ann,
         name='apply_homopolymer_ann',
         input=output_from('apply_snpeff_ur'),
-        filter=suffix('.vep.anno.snpeff.vcf'),
+        filter=suffix('.vep.anno.snpeff.vcf.gz'),
         output='.annotated.vcf')
+        .follows('apply_tabix'))
 
     # Apply summarize multi coverage
     (pipeline.merge(

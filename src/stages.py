@@ -442,8 +442,10 @@ class Stages(object):
         #cores = self.get_stage_options('apply_snpeff', 'cores')  apply_snpeff
         # mem = int(self.state.config.get_stage_options(stage, 'mem'))
         mem = int(self.get_stage_options('apply_snpeff', 'mem')) - 2
-        snpeff_command = "java -Xmx{mem}g -jar {snpeff_path} eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
-                    mem=mem, snpeff_path=self.snpeff_path, snpeff_conf=self.snpeff_conf, vcf_in=vcf_in, vcf_out=vcf_out)
+        snpeff_command = "java -Xmx{mem}g -jar {snpeff_path} eff -c {snpeff_conf} " \
+                    "-canon GRCh37.75 {vcf_in} | bgzip -c > {vcf_out}".format(
+                    mem=mem, snpeff_path=self.snpeff_path, snpeff_conf=self.snpeff_conf,
+                    vcf_in=vcf_in, vcf_out=vcf_out)
         run_stage(self.state, 'apply_snpeff', snpeff_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
 
@@ -471,6 +473,12 @@ class Stages(object):
         # safe_make_dir('variants')
         command = 'vcf-concat {vcfs} | vcf-sort -c | bgzip -c > {vcf_out} '.format(vcfs=vcfs,vcf_out=vcf_out)
         run_stage(self.state, 'apply_cat_vcf', command)
+
+    def apply_tabix(self, input, vcf_out):
+        '''bgzip the vcf file in prepartion for bcftools annotation'''
+        vcf = input
+        command = "tabix -p vcf {vcf}"
+        run_stage(self.state, 'apply_tabix', command)        
 
     def apply_homopolymer_ann(self, inputs, vcf_out):
         '''Apply HomopolymerRun annotation to undr_rover output'''
