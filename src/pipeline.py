@@ -290,7 +290,7 @@ def make_pipeline(state):
         name='apply_snpeff_ur',
         input=output_from('apply_vcfanno_ur'),
         filter=suffix('.vep.anno.vcf'),
-        output='.vep.anno.snpeff.vcf')
+        output='.vep.anno.snpeff.vcf.gz')
         .follows('apply_vcfanno_ur'))
 
     # Apply tabix
