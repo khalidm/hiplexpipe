@@ -442,7 +442,7 @@ class Stages(object):
         #cores = self.get_stage_options('apply_snpeff', 'cores')  apply_snpeff
         # mem = int(self.state.config.get_stage_options(stage, 'mem'))
         mem = int(self.get_stage_options('apply_snpeff', 'mem')) - 2
-        snpeff_command = "java -Xmx{mem} -jar {snpeff_path} eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
+        snpeff_command = "java -Xmx{mem}g -jar {snpeff_path} eff -c {snpeff_conf} -canon GRCh37.75 {vcf_in} > {vcf_out}".format(
                     mem=mem, snpeff_path=self.snpeff_path, snpeff_conf=self.snpeff_conf, vcf_in=vcf_in, vcf_out=vcf_out)
         run_stage(self.state, 'apply_snpeff', snpeff_command)
         #run_snpeff(self.state, 'apply_snpeff', snpeff_command)
