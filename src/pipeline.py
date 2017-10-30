@@ -319,12 +319,12 @@ def make_pipeline(state):
     #     output='coverage/all.hsmetrics.txt')
     #     .follows('target_coverage'))
 
-    # Apply summarize multicov coverage plots
-    (pipeline.merge(
-        task_func=stages.apply_multicov_plots,
-        name='apply_multicov_plots',
-        input=output_from('apply_multicov'),
-        output='coverage/coverage_analysis_main.html')
-        .follows('apply_multicov'))
+    # # Apply summarize multicov coverage plots
+    # (pipeline.merge(
+    #     task_func=stages.apply_multicov_plots,
+    #     name='apply_multicov_plots',
+    #     input=output_from('apply_multicov'),
+    #     output='coverage/coverage_analysis_main.html')
+    #     .follows('apply_multicov'))
 
     return pipeline
