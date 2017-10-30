@@ -296,11 +296,11 @@ class Stages(object):
                     "--filterExpression \"QUAL < 30.0\" --filterName \"VeryLowQual\" " \
                     "--filterExpression \"QD < 2.0\" --filterName \"LowQD\" " \
                     "--filterExpression \"DP < 10\" --filterName \"LowCoverage\" " \
-                    "--filterExpression \"MQ < 40\" --filterName \"LowMappingQual\" " \
+                    "--filterExpression \"MQ < 40.0\" --filterName \"LowMappingQual\" " \
                     "--filterExpression \"SOR > 4.0\" --filterName \"StrandBias\" " \
-                    "--filterExpression \"HRun > 8.0\" --filterName \"HRun8\" " \
-                    "--clusterWindowSize 30 " \
-                    "--clusterSize 3 " \
+                    "--filterExpression \"HRun > 7.0\" --filterName \"HRun7\" " \
+                    "--clusterWindowSize 10 " \
+                    "--clusterSize 4 " \
                     "--variant {vcf_in} -o {vcf_out}".format(reference=self.reference,
                                                       cores=cores, vcf_in=vcf_in, vcf_out=vcf_out)
         self.run_gatk('apply_variant_filtration_gatk', gatk_args)
