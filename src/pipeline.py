@@ -168,48 +168,48 @@ def make_pipeline(state):
        output='.raw.annotate.vcf')
 
     # ------- RECAL
-    # SNP recalibration using GATK
-    pipeline.transform(
-        task_func=stages.snp_recalibrate_gatk,
-        name='snp_recalibrate_gatk',
-        input=output_from('variant_annotator_gatk'),
-        filter=suffix('.raw.annotate.vcf'),
-        output=['.snp_recal', '.snp_tranches', '.snp_plots.R'])
-
-    # Apply SNP recalibration using GATK
-    (pipeline.transform(
-        task_func=stages.apply_snp_recalibrate_gatk,
-        name='apply_snp_recalibrate_gatk',
-        input=output_from('variant_annotator_gatk'),
-        filter=suffix('.raw.annotate.vcf'),
-        add_inputs=add_inputs(['variants/ALL.snp_recal', 'variants/ALL.snp_tranches']),
-        output='.recal_SNP.vcf')
-        .follows('snp_recalibrate_gatk'))
-
-    # INDEL recalibration using GATK
-    pipeline.transform(
-        task_func=stages.indel_recalibrate_gatk,
-        name='indel_recalibrate_gatk',
-        input=output_from('apply_snp_recalibrate_gatk'),
-        filter=suffix('.recal_SNP.vcf'),
-        output=['.indel_recal', '.indel_tranches', '.indel_plots.R'])
-
-    # Apply INDEL recalibration using GATK
-    (pipeline.transform(
-        task_func=stages.apply_indel_recalibrate_gatk,
-        name='apply_indel_recalibrate_gatk',
-        input=output_from('apply_snp_recalibrate_gatk'),
-        filter=suffix('.recal_SNP.vcf'),
-        add_inputs=add_inputs(
-            ['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
-        output='.raw.annotate.vqsr.vcf')
-        .follows('indel_recalibrate_gatk'))
+    # # SNP recalibration using GATK
+    # pipeline.transform(
+    #     task_func=stages.snp_recalibrate_gatk,
+    #     name='snp_recalibrate_gatk',
+    #     input=output_from('variant_annotator_gatk'),
+    #     filter=suffix('.raw.annotate.vcf'),
+    #     output=['.snp_recal', '.snp_tranches', '.snp_plots.R'])
+    #
+    # # Apply SNP recalibration using GATK
+    # (pipeline.transform(
+    #     task_func=stages.apply_snp_recalibrate_gatk,
+    #     name='apply_snp_recalibrate_gatk',
+    #     input=output_from('variant_annotator_gatk'),
+    #     filter=suffix('.raw.annotate.vcf'),
+    #     add_inputs=add_inputs(['variants/ALL.snp_recal', 'variants/ALL.snp_tranches']),
+    #     output='.recal_SNP.vcf')
+    #     .follows('snp_recalibrate_gatk'))
+    #
+    # # INDEL recalibration using GATK
+    # pipeline.transform(
+    #     task_func=stages.indel_recalibrate_gatk,
+    #     name='indel_recalibrate_gatk',
+    #     input=output_from('apply_snp_recalibrate_gatk'),
+    #     filter=suffix('.recal_SNP.vcf'),
+    #     output=['.indel_recal', '.indel_tranches', '.indel_plots.R'])
+    #
+    # # Apply INDEL recalibration using GATK
+    # (pipeline.transform(
+    #     task_func=stages.apply_indel_recalibrate_gatk,
+    #     name='apply_indel_recalibrate_gatk',
+    #     input=output_from('apply_snp_recalibrate_gatk'),
+    #     filter=suffix('.recal_SNP.vcf'),
+    #     add_inputs=add_inputs(
+    #         ['variants/ALL.indel_recal', 'variants/ALL.indel_tranches']),
+    #     output='.raw.annotate.vqsr.vcf')
+    #     .follows('indel_recalibrate_gatk'))
 
     # Apply VariantFiltration using GATK
     (pipeline.transform(
         task_func=stages.apply_variant_filtration_gatk_lenient,
         name='apply_variant_filtration_gatk_lenient',
-        input=output_from('apply_indel_recalibrate_gatk'),
+        input=output_from('variant_annotator_gatk'),
         filter=suffix('.raw.annotate.vqsr.vcf'),
         output='.raw.annotate.vqsr.filtered_lenient.vcf')
         .follows('apply_indel_recalibrate_gatk'))
