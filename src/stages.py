@@ -477,8 +477,8 @@ class Stages(object):
     def apply_tabix(self, input, vcf_out):
         '''bgzip the vcf file in prepartion for bcftools annotation'''
         vcf = input
-        command = "tabix -p vcf {vcf}"
-        run_stage(self.state, 'apply_tabix', command)        
+        command = "tabix -p vcf {vcf}".format(vcf=vcf)
+        run_stage(self.state, 'apply_tabix', command)
 
     def apply_homopolymer_ann(self, inputs, vcf_out):
         '''Apply HomopolymerRun annotation to undr_rover output'''
