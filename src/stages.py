@@ -483,7 +483,7 @@ class Stages(object):
         vcf_in = inputs
         # safe_make_dir('variants')
         command = "bcftools annotate -a {hrfile} -c CHROM,FROM,TO,HRUN " \
-                    "-h <(echo '##INFO=<ID=HRUN,Number=1,Type=String,Description=\"HRun\">') " \
+                    "-h <\(echo '##INFO=<ID=HRUN,Number=1,Type=String,Description=\"HRun\">'\) " \
                     "{vcf_in} > {vcf_out}".format(hrfile=self.hrfile,vcf_in=vcf_in,vcf_out=vcf_out)
         run_stage(self.state, 'apply_cat_vcf', command)
 
