@@ -211,7 +211,7 @@ def make_pipeline(state):
         name='apply_variant_filtration_gatk_lenient',
         input=output_from('variant_annotator_gatk'),
         filter=suffix('.raw.annotate.vcf'),
-        output='.raw.annotate.filtered_lenient.vcf'
+        output='.raw.annotate.filtered_lenient.vcf')
 
     # ------- RECAL
 
