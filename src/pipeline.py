@@ -298,7 +298,7 @@ def make_pipeline(state):
         task_func=stages.apply_tabix,
         name='apply_tabix',
         input=output_from('apply_snpeff_ur'),
-        filter=suffix('.vep.anno.vcf.gz'),
+        filter=suffix('.vep.anno.snpeff.vcf.gz'),
         output='.vep.anno.snpeff.vcf.gz.tbi')
 
     # Apply HomopolymerRun
