@@ -295,7 +295,7 @@ def make_pipeline(state):
 
     # Apply tabix
     pipeline.transform(
-        task_func=stages.apply_bgzip,
+        task_func=stages.apply_tabix,
         name='apply_tabix',
         input=output_from('apply_snpeff_ur'),
         filter=suffix('.vep.anno.vcf.gz'),
