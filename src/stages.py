@@ -482,8 +482,9 @@ class Stages(object):
         '''Apply HomopolymerRun annotation to undr_rover output'''
         vcf_in = inputs
         # safe_make_dir('variants')
-        command = "bcftools annotate -a {hrfile} -c CHROM,FROM,TO,HRUN " \
-                    "-h <\(echo '##INFO=<ID=HRUN,Number=1,Type=String,Description=\"HRun\">'\) " \
+        command = "echo \"##INFO=<ID=HRUN,Number=1,Type=String,Description=\"HRun\">\" > header.tmp; "\
+                    "bcftools annotate -a {hrfile} -c CHROM,FROM,TO,HRUN " \
+                    "-h header.tmp " \
                     "{vcf_in} > {vcf_out}".format(hrfile=self.hrfile,vcf_in=vcf_in,vcf_out=vcf_out)
         run_stage(self.state, 'apply_cat_vcf', command)
 
