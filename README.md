@@ -1,6 +1,6 @@
 # hiplexpipe
 
-## A bioinformatics pipeline for variant calling for [Hi-Plex] (http://hiplex.org/)
+## A bioinformatics pipeline for variant calling for [Hi-Plex](http://hiplex.org/)
 
 Author: Khalid Mahmood (kmahmood@unimelb.edu.au)
 
