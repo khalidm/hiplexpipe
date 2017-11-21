@@ -30,12 +30,8 @@ def make_pipeline(state):
         input=output_from('original_fastqs'),
         # Match the R1 (read 1) FASTQ file and grab the path and sample name.
         # This will be the first input to the stage.
-        # We assume the sample name may consist of only alphanumeric
-        # characters.
         # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
         # new sample name = OHI031002-P02F04
-        # 100ng-GSP4-cy0-251_S251_L001_R2_001.fastq.gz
-        # HardSeed-4C-096_S96_L001_R1_001.fastq.gz
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
         # Add one more inputs to the stage:
@@ -57,14 +53,8 @@ def make_pipeline(state):
         input=output_from('original_fastqs'),
         # Match the R1 (read 1) FASTQ file and grab the path and sample name.
         # This will be the first input to the stage.
-        # We assume the sample name may consist of only alphanumeric
-        # characters.
-        # Hi-Plex example: OHI031002-P02F04_S318_L001_R1_001.fastq
         filter=formatter(
             '.+/(?P<sample>[a-zA-Z0-9-]+)_(?P<readid>[a-zA-Z0-9-]+)_(?P<lane>[a-zA-Z0-9]+)_R1_(?P<lib>[a-zA-Z0-9-:]+).fastq'),
-        # Add one more inputs to the stage:
-        #    1. The corresponding R2 FASTQ file
-        # Hi-Plex example: OHI031002-P02F04_S318_L001_R2_001.fastq
 
         add_inputs=add_inputs(
             '{path[0]}/{sample[0]}_{readid[0]}_{lane[0]}_R2_{lib[0]}.fastq'),
