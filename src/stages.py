@@ -60,6 +60,7 @@ class Stages(object):
         self.hrfile = self.get_options('hrfile')
         self.other_vep = self.get_options('other_vep')
         self.snpeff_path = self.get_options('snpeff_path')
+
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
@@ -114,6 +115,7 @@ class Stages(object):
         coverfile = "variants/undr_rover/coverdir/" + sample_id + "_" + readid + ".coverage"
         # read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{readid}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
             # .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
+
         command = 'undr_rover --primer_coords {coord_file} ' \
                   '--primer_sequences {primer_file} ' \
                   '--reference {reference} ' \
@@ -126,6 +128,7 @@ class Stages(object):
                         coord_file=self.coord_file, primer_file=self.primer_file,
                         reference=self.reference,
                         vcf_output=vcf_output,
+                        coverdir=self.coverdir,
                         proportionthresh=self.proportionthresh,
                         absthresh=self.absthresh,
                         maxvariants=self.maxvariants,
