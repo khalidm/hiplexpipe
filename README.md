@@ -1,6 +1,6 @@
 # hiplexpipe
 
-# A bioinformatics pipeline based on [Ruffus](http://www.ruffus.org.uk/)
+## A bioinformatics pipeline for variant calling for [Hi-Plex] (http://hiplex.org/)
 
 Author: Khalid Mahmood (kmahmood@unimelb.edu.au)
 
