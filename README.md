@@ -1,6 +1,6 @@
 # hiplexpipe
 
-## A bioinformatics pipeline for variant calling for [Hi-Plex](http://hiplex.org/)
+## A bioinformatics pipeline for variant calling for [Hi-Plex](http://hiplex.org/) sequencing.
 
 Author: Khalid Mahmood (kmahmood@unimelb.edu.au)
 
@@ -38,16 +38,16 @@ See LICENSE.txt in source repository.
 
 `hiplexpipe` depends on the following python libraries, tools and wrappers.
 
+* Python 2.7.5
+* [PyVCF](https://pypi.python.org/pypi/PyVCF)  
+* [Biopython](https://pypi.python.org/pypi/biopython)
+* [pybedtools](https://daler.github.io/pybedtools/)
+* [cyvcf2](http://brentp.github.io/cyvcf2/)
+
 We recommend using a python virtual environment. Following is an examples of how to setup a `hiplexpipe` virtual environment ready for analysis:
 
-## Requirements
-  * Python 2.7
-  * [PyVCF](https://pypi.python.org/pypi/PyVCF)  
-  * [Biopython](https://pypi.python.org/pypi/biopython)
-  * [pybedtools](https://daler.github.io/pybedtools/)
-  * [cyvcf2](http://brentp.github.io/cyvcf2/)
+#### Usage example on Melbourne Bioinformatics clusters
 
-## Usage example on Melbourne Bioinformatics (VLSCI)
 ```
 module load Python/2.7.10-vlsci_intel-2015.08.25
 export DRMAA_LIBRARY_PATH=/usr/local/slurm_drmaa/1.0.7-GCC/lib/libdrmaa.so
