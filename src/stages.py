@@ -48,7 +48,7 @@ class Stages(object):
         self.vt_path = self.get_options('vt_path')
         self.coord_file = self.get_options('coord_file')
         self.target_bed = self.get_options('target_bed')
-        self.interval_file = self.get_options('interval_file')
+        # self.interval_file = self.get_options('interval_file')
         self.primer_file = self.get_options('primer_file')
         self.primer_bedpe_file = self.get_options('primer_bedpe_file')
         self.proportionthresh = self.get_options('proportionthresh')
@@ -185,8 +185,8 @@ class Stages(object):
                     "-A SampleList -A SpanningDeletions " \
                     "-A StrandBiasBySample -A StrandOddsRatio " \
                     "-A TandemRepeatAnnotator -A VariantType " \
-                    "-I {bam} -L {interval_list} -o {out}".format(reference=self.reference,
-                                                                  bam=bam_in, interval_list=self.interval_file, out=vcf_out)
+                    "-I {bam} -o {out}".format(reference=self.reference,
+                                                                  bam=bam_in, out=vcf_out)
         self.run_gatk('call_haplotypecaller_gatk', gatk_args)
 
     def combine_gvcf_gatk(self, vcf_files_in, vcf_out):
@@ -328,15 +328,15 @@ class Stages(object):
     ###########
 
     # coverage picard
-    def target_coverage(self, bam_in, coverage_out):
-        '''Calculate coverage using Picard'''
-        safe_make_dir('coverage')
-        picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
-                      'R={reference} BAIT_INTERVALS={interval_file} ' \
-                      'TARGET_INTERVALS={interval_file}'.format(
-                          bam_in=bam_in, coverage_out=coverage_out,
-                          reference=self.reference, interval_file=self.interval_file)
-        self.run_picard('target_coverage', picard_args)
+    # def target_coverage(self, bam_in, coverage_out):
+    #     '''Calculate coverage using Picard'''
+    #     safe_make_dir('coverage')
+    #     picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
+    #                   'R={reference} BAIT_INTERVALS={interval_file} ' \
+    #                   'TARGET_INTERVALS={interval_file}'.format(
+    #                       bam_in=bam_in, coverage_out=coverage_out,
+    #                       reference=self.reference, interval_file=self.interval_file)
+    #     self.run_picard('target_coverage', picard_args)
 
     # coverage bam
     def target_coverage_bamutil(self, bam_in, coverage_out):
@@ -346,11 +346,11 @@ class Stages(object):
         run_stage(self.state, 'target_coverage_bamutil', command)
 
     # coverage bam interval
-    def target_coverage_bamutil_interval(self, bam_in, coverage_out):
-        '''Calculate target coverage using bamutil'''
-        command = 'bam stats --basic --in {bam_in} --regionList {fragment_bed} &> {coverage_out}'.format(
-                          bam_in=bam_in, fragment_bed = self.fragment_bed, coverage_out=coverage_out)
-        run_stage(self.state, 'target_coverage_bamutil_interval', command)
+    # def target_coverage_bamutil_interval(self, bam_in, coverage_out):
+    #     '''Calculate target coverage using bamutil'''
+    #     command = 'bam stats --basic --in {bam_in} --regionList {fragment_bed} &> {coverage_out}'.format(
+    #                       bam_in=bam_in, fragment_bed = self.fragment_bed, coverage_out=coverage_out)
+    #     run_stage(self.state, 'target_coverage_bamutil_interval', command)
 
     # multicov
     def apply_multicov(self, bam_in, multicov):
