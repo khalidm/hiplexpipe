@@ -54,7 +54,7 @@ class Stages(object):
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
         self.maxvariants = self.get_options('maxvariants')
-        self.fragment_bed = self.get_options('fragment_bed')
+        # self.fragment_bed = self.get_options('fragment_bed')
         self.annolua = self.get_options('annolua')
         self.anno = self.get_options('anno')
         self.hrfile = self.get_options('hrfile')

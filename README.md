@@ -52,8 +52,8 @@ bamclipper: /vlsci/VR0002/kmahmood/Programs/bamclipper/bamclipper-master/bamclip
 coord_file: /vlsci/VR0182/shared/km/hiplex/CRC_10g_23May16.final.rover.txt # primer coordinates - undr_rover
 primer_file: /vlsci/VR0182/shared/km/hiplex/CRC_10g_23May16.final.idt.csv # primer sequences file - undr_rover
 target_bed: /vlsci/VR0182/shared/km/hiplex/CRC_10g_23May16.final.rover.bed # bedtools multicov
-interval_file: /vlsci/VR0182/shared/km/hiplex/CRC_10g_23May16.final.rover.interval_list # haplotypecaller gatk
 primer_bedpe_file: /vlsci/UOM0040/shared/km/hiplex/GSN/CRC_10g_23May16.final.rover.primer.bedpe # bamclipper
+#interval_file: /vlsci/VR0182/shared/km/hiplex/CRC_10g_23May16.final.rover.interval_list # haplotypecaller gatk
 #fragment_bed: goc.bed
 #target_bed_merged: /vlsci/VR0182/shared/km/hiplex/CRC_merged.bed
 
