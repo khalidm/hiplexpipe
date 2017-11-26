@@ -128,7 +128,7 @@ class Stages(object):
                         coord_file=self.coord_file, primer_file=self.primer_file,
                         reference=self.reference,
                         vcf_output=vcf_output,
-                        coverdir=self.coverdir,
+                        #coverdir=self.coverdir,
                         proportionthresh=self.proportionthresh,
                         absthresh=self.absthresh,
                         maxvariants=self.maxvariants,
