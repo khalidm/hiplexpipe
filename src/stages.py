@@ -12,7 +12,6 @@ from runner import run_stage
 import os
 
 # PICARD_JAR = '$PICARD_HOME/lib/picard-1.69.jar'
-# PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/picard/picard-tools-2.0.1/picard.jar'
 PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/Picard/picard-tools-2.8.3/picard.jar'
 SNPEFF_JAR = '/usr/local/easybuild/software/snpEff/4.1d-Java-1.7.0_80/snpEff.jar'
 
@@ -40,8 +39,6 @@ class Stages(object):
         self.one_k_g_indels = self.get_options('one_k_g_indels')
         self.one_k_g_highconf_snps = self.get_options('one_k_g_highconf_snps')
         self.hapmap = self.get_options('hapmap')
-        # self.interval_hg19 = self.get_options('exome_bed_hg19')
-        # self.CEU_mergeGvcf = self.get_options('CEU_mergeGvcf')
         self.snpeff_conf = self.get_options('snpeff_conf')
         self.bamclipper = self.get_options('bamclipper')
         self.vep_path = self.get_options('vep_path')
@@ -60,9 +57,6 @@ class Stages(object):
         self.hrfile = self.get_options('hrfile')
         self.other_vep = self.get_options('other_vep')
         self.snpeff_path = self.get_options('snpeff_path')
-
-        # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
-        # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
 
     def run_picard(self, stage, args):
         mem = int(self.state.config.get_stage_options(stage, 'mem'))
@@ -84,11 +78,9 @@ class Stages(object):
 
     def original_fastqs(self, output):
         '''Original fastq files'''
-        # print output
         pass
 
     def align_bwa(self, inputs, bam_out, sample_id, read_id, lane, lib):
-        # def align_bwa(self, inputs, bam_out, sample_id):
         '''Align the paired end fastq files to the reference genome using bwa'''
         fastq_read1_in, fastq_read2_in = inputs
         cores = self.get_stage_options('align_bwa', 'cores')
@@ -113,8 +105,6 @@ class Stages(object):
         safe_make_dir('variants/undr_rover')
         safe_make_dir('variants/undr_rover/coverdir')
         coverfile = "variants/undr_rover/coverdir/" + sample_id + "_" + readid + ".coverage"
-        # read_group = '"@RG\\tID:{readid}\\tSM:{sample}_{readid}\\tPU:lib1\\tLN:{lane}\\tPL:Illumina"' \
-            # .format(readid=read_id, lib=lib, lane=lane, sample=sample_id)
 
         command = 'undr_rover --primer_coords {coord_file} ' \
                   '--primer_sequences {primer_file} ' \
@@ -231,86 +221,86 @@ class Stages(object):
                     .format(reference=self.reference, cores=cores, vcf_in=vcf_in, vcf_out=vcf_out)
         self.run_gatk('variant_annotator_gatk', gatk_args)
 
-    def snp_recalibrate_gatk(self, genotype_vcf_in, outputs):
-        '''SNP recalibration using GATK'''
-        recal_snp_out, tranches_snp_out, snp_plots_r_out = outputs
-        cores = self.get_stage_options('snp_recalibrate_gatk', 'cores')
-        gatk_args = "-T VariantRecalibrator --disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "-R {reference} --minNumBadVariants 5000 --num_threads {cores} " \
-                    "-resource:hapmap,known=false,training=true,truth=true,prior=15.0 {hapmap} " \
-                    "-resource:omni,known=false,training=true,truth=true,prior=12.0 {one_k_g_snps} " \
-                    "-resource:1000G,known=false,training=true,truth=false,prior=10.0 {one_k_g_highconf_snps} " \
-                    "-an DP -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR " \
-                    "-input {genotype_vcf} --recal_file {recal_snp} --tranches_file {tranches_snp} " \
-                    "-rscriptFile {snp_plots} -mode SNP".format(reference=self.reference,
-                                                                cores=cores, hapmap=self.hapmap, one_k_g_snps=self.one_k_g_snps,
-                                                                one_k_g_highconf_snps=self.one_k_g_highconf_snps, genotype_vcf=genotype_vcf_in,
-                                                                recal_snp=recal_snp_out, tranches_snp=tranches_snp_out, snp_plots=snp_plots_r_out)
-        self.run_gatk('snp_recalibrate_gatk', gatk_args)
+    # def snp_recalibrate_gatk(self, genotype_vcf_in, outputs):
+    #     '''SNP recalibration using GATK'''
+    #     recal_snp_out, tranches_snp_out, snp_plots_r_out = outputs
+    #     cores = self.get_stage_options('snp_recalibrate_gatk', 'cores')
+    #     gatk_args = "-T VariantRecalibrator --disable_auto_index_creation_and_locking_when_reading_rods " \
+    #                 "-R {reference} --minNumBadVariants 5000 --num_threads {cores} " \
+    #                 "-resource:hapmap,known=false,training=true,truth=true,prior=15.0 {hapmap} " \
+    #                 "-resource:omni,known=false,training=true,truth=true,prior=12.0 {one_k_g_snps} " \
+    #                 "-resource:1000G,known=false,training=true,truth=false,prior=10.0 {one_k_g_highconf_snps} " \
+    #                 "-an DP -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR " \
+    #                 "-input {genotype_vcf} --recal_file {recal_snp} --tranches_file {tranches_snp} " \
+    #                 "-rscriptFile {snp_plots} -mode SNP".format(reference=self.reference,
+    #                                                             cores=cores, hapmap=self.hapmap, one_k_g_snps=self.one_k_g_snps,
+    #                                                             one_k_g_highconf_snps=self.one_k_g_highconf_snps, genotype_vcf=genotype_vcf_in,
+    #                                                             recal_snp=recal_snp_out, tranches_snp=tranches_snp_out, snp_plots=snp_plots_r_out)
+    #     self.run_gatk('snp_recalibrate_gatk', gatk_args)
+    #
+    # def indel_recalibrate_gatk(self, genotype_vcf_in, outputs):
+    #     '''INDEL recalibration using GATK'''
+    #     recal_indel_out, tranches_indel_out, indel_plots_r_out = outputs
+    #     cores = self.get_stage_options('indel_recalibrate_gatk', 'cores')
+    #     gatk_args = "-T VariantRecalibrator --disable_auto_index_creation_and_locking_when_reading_rods " \
+    #                 "-R {reference} --minNumBadVariants 5000 --num_threads {cores} " \
+    #                 "-resource:mills,known=false,training=true,truth=true,prior=12.0 {mills_hg19} " \
+    #                 "-resource:1000G,known=false,training=true,truth=true,prior=10.0 {one_k_g_indels} " \
+    #                 "-an DP -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR " \
+    #                 "-input {genotype_vcf} -recalFile {recal_indel} " \
+    #                 "-tranchesFile {tranches_indel} -rscriptFile {indel_plots} " \
+    #                 " -mode INDEL --maxGaussians 4".format(reference=self.reference,
+    #                                       cores=cores, mills_hg19=self.mills_hg19, one_k_g_indels=self.one_k_g_indels,
+    #                                       genotype_vcf=genotype_vcf_in, recal_indel=recal_indel_out,
+    #                                       tranches_indel=tranches_indel_out, indel_plots=indel_plots_r_out)
+    #     self.run_gatk('indel_recalibrate_gatk', gatk_args)
+    #
+    # def apply_snp_recalibrate_gatk(self, inputs, vcf_out):
+    #     '''Apply SNP recalibration using GATK'''
+    #     genotype_vcf_in, [recal_snp, tranches_snp] = inputs
+    #     cores = self.get_stage_options('apply_snp_recalibrate_gatk', 'cores')
+    #     gatk_args = "-T ApplyRecalibration --disable_auto_index_creation_and_locking_when_reading_rods " \
+    #                 "-R {reference} --ts_filter_level 99.5 --num_threads {cores} " \
+    #                 "-input {genotype_vcf} -recalFile {recal_snp} -tranchesFile {tranches_snp} " \
+    #                 "-mode SNP -o {vcf_out}".format(reference=self.reference,
+    #                                                 cores=cores, genotype_vcf=genotype_vcf_in, recal_snp=recal_snp,
+    #                                                 tranches_snp=tranches_snp, vcf_out=vcf_out)
+    #     self.run_gatk('apply_snp_recalibrate_gatk', gatk_args)
+    #
+    # def apply_indel_recalibrate_gatk(self, inputs, vcf_out):
+    #     '''Apply INDEL recalibration using GATK'''
+    #     genotype_vcf_in, [recal_indel, tranches_indel] = inputs
+    #     cores = self.get_stage_options('apply_indel_recalibrate_gatk', 'cores')
+    #     gatk_args = "-T ApplyRecalibration --disable_auto_index_creation_and_locking_when_reading_rods " \
+    #                 "-R {reference} --ts_filter_level 99.0 --num_threads {cores} " \
+    #                 "-input {genotype_vcf} -recalFile {recal_indel} -tranchesFile {tranches_indel} " \
+    #                 "-mode INDEL -o {vcf_out}".format(reference=self.reference,
+    #                                                   cores=cores, genotype_vcf=genotype_vcf_in, recal_indel=recal_indel,
+    #                                                   tranches_indel=tranches_indel, vcf_out=vcf_out)
+    #     self.run_gatk('apply_indel_recalibrate_gatk', gatk_args)
 
-    def indel_recalibrate_gatk(self, genotype_vcf_in, outputs):
-        '''INDEL recalibration using GATK'''
-        recal_indel_out, tranches_indel_out, indel_plots_r_out = outputs
-        cores = self.get_stage_options('indel_recalibrate_gatk', 'cores')
-        gatk_args = "-T VariantRecalibrator --disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "-R {reference} --minNumBadVariants 5000 --num_threads {cores} " \
-                    "-resource:mills,known=false,training=true,truth=true,prior=12.0 {mills_hg19} " \
-                    "-resource:1000G,known=false,training=true,truth=true,prior=10.0 {one_k_g_indels} " \
-                    "-an DP -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR " \
-                    "-input {genotype_vcf} -recalFile {recal_indel} " \
-                    "-tranchesFile {tranches_indel} -rscriptFile {indel_plots} " \
-                    " -mode INDEL --maxGaussians 4".format(reference=self.reference,
-                                          cores=cores, mills_hg19=self.mills_hg19, one_k_g_indels=self.one_k_g_indels,
-                                          genotype_vcf=genotype_vcf_in, recal_indel=recal_indel_out,
-                                          tranches_indel=tranches_indel_out, indel_plots=indel_plots_r_out)
-        self.run_gatk('indel_recalibrate_gatk', gatk_args)
-
-    def apply_snp_recalibrate_gatk(self, inputs, vcf_out):
-        '''Apply SNP recalibration using GATK'''
-        genotype_vcf_in, [recal_snp, tranches_snp] = inputs
-        cores = self.get_stage_options('apply_snp_recalibrate_gatk', 'cores')
-        gatk_args = "-T ApplyRecalibration --disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "-R {reference} --ts_filter_level 99.5 --num_threads {cores} " \
-                    "-input {genotype_vcf} -recalFile {recal_snp} -tranchesFile {tranches_snp} " \
-                    "-mode SNP -o {vcf_out}".format(reference=self.reference,
-                                                    cores=cores, genotype_vcf=genotype_vcf_in, recal_snp=recal_snp,
-                                                    tranches_snp=tranches_snp, vcf_out=vcf_out)
-        self.run_gatk('apply_snp_recalibrate_gatk', gatk_args)
-
-    def apply_indel_recalibrate_gatk(self, inputs, vcf_out):
-        '''Apply INDEL recalibration using GATK'''
-        genotype_vcf_in, [recal_indel, tranches_indel] = inputs
-        cores = self.get_stage_options('apply_indel_recalibrate_gatk', 'cores')
-        gatk_args = "-T ApplyRecalibration --disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "-R {reference} --ts_filter_level 99.0 --num_threads {cores} " \
-                    "-input {genotype_vcf} -recalFile {recal_indel} -tranchesFile {tranches_indel} " \
-                    "-mode INDEL -o {vcf_out}".format(reference=self.reference,
-                                                      cores=cores, genotype_vcf=genotype_vcf_in, recal_indel=recal_indel,
-                                                      tranches_indel=tranches_indel, vcf_out=vcf_out)
-        self.run_gatk('apply_indel_recalibrate_gatk', gatk_args)
+    # def apply_variant_filtration_gatk(self, inputs, vcf_out):
+    #     '''Apply Variant Filtration using gatk'''
+    #     vcf_in = inputs
+    #     cores = self.get_stage_options('apply_variant_filtration_gatk', 'cores')
+    #     gatk_args = "-T VariantFiltration --disable_auto_index_creation_and_locking_when_reading_rods " \
+    #                 "-R {reference} " \
+    #                 "--filterExpression \"QUAL < 30.0\" --filterName \"VeryLowQual\" " \
+    #                 "--filterExpression \"QD < 2.0\" --filterName \"LowQD\" " \
+    #                 "--filterExpression \"DP < 10\" --filterName \"LowCoverage\" " \
+    #                 "--filterExpression \"MQ < 40.0\" --filterName \"LowMappingQual\" " \
+    #                 "--filterExpression \"SOR > 4.0\" --filterName \"StrandBias\" " \
+    #                 "--filterExpression \"HRun > 7.0\" --filterName \"HRun7\" " \
+    #                 "--clusterWindowSize 10 " \
+    #                 "--clusterSize 4 " \
+    #                 "--variant {vcf_in} -o {vcf_out}".format(reference=self.reference,
+    #                                                   cores=cores, vcf_in=vcf_in, vcf_out=vcf_out)
+    #     self.run_gatk('apply_variant_filtration_gatk', gatk_args)
 
     def apply_variant_filtration_gatk(self, inputs, vcf_out):
         '''Apply Variant Filtration using gatk'''
         vcf_in = inputs
         cores = self.get_stage_options('apply_variant_filtration_gatk', 'cores')
-        gatk_args = "-T VariantFiltration --disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "-R {reference} " \
-                    "--filterExpression \"QUAL < 30.0\" --filterName \"VeryLowQual\" " \
-                    "--filterExpression \"QD < 2.0\" --filterName \"LowQD\" " \
-                    "--filterExpression \"DP < 10\" --filterName \"LowCoverage\" " \
-                    "--filterExpression \"MQ < 40.0\" --filterName \"LowMappingQual\" " \
-                    "--filterExpression \"SOR > 4.0\" --filterName \"StrandBias\" " \
-                    "--filterExpression \"HRun > 7.0\" --filterName \"HRun7\" " \
-                    "--clusterWindowSize 10 " \
-                    "--clusterSize 4 " \
-                    "--variant {vcf_in} -o {vcf_out}".format(reference=self.reference,
-                                                      cores=cores, vcf_in=vcf_in, vcf_out=vcf_out)
-        self.run_gatk('apply_variant_filtration_gatk', gatk_args)
-
-    def apply_variant_filtration_gatk_lenient(self, inputs, vcf_out):
-        '''Apply Variant Filtration using gatk'''
-        vcf_in = inputs
-        cores = self.get_stage_options('apply_variant_filtration_gatk_lenient', 'cores')
         gatk_args = "-T VariantFiltration --disable_auto_index_creation_and_locking_when_reading_rods " \
                     "-R {reference} " \
                     "--filterExpression \"QUAL < 30.0\" --filterName \"VeryLowQual\" " \
@@ -323,7 +313,7 @@ class Stages(object):
                     "--filterExpression \"ReadPosRankSum < -8.0\" --filterName \"ReadPosRankSum\" " \
                     "--variant {vcf_in} -o {vcf_out}".format(reference=self.reference,
                                                             cores=cores, vcf_in=vcf_in, vcf_out=vcf_out)
-        self.run_gatk('apply_variant_filtration_gatk_lenient', gatk_args)
+        self.run_gatk('apply_variant_filtration_gatk', gatk_args)
 
     ###########
 
