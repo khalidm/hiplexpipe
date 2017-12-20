@@ -304,28 +304,12 @@ def make_pipeline(state):
         .follows('apply_tabix'))
 
     # Apply summarize multi coverage
-    (pipeline.merge(
-        task_func=stages.apply_multicov,
-        name='apply_multicov',
-        input=output_from('primary_bam'),
-        # filter=suffix('.primary.bam'),
-        output='coverage/all.multicov.txt')
-        .follows('index_bam'))
-
-    # Apply summarize picard coverage
     # (pipeline.merge(
-    #     task_func=stages.apply_summarize_picard,
-    #     name='apply_summarize_picard',
-    #     input=output_from('target_coverage'),
-    #     output='coverage/all.hsmetrics.txt')
-    #     .follows('target_coverage'))
-
-    # # Apply summarize multicov coverage plots
-    # (pipeline.merge(
-    #     task_func=stages.apply_multicov_plots,
-    #     name='apply_multicov_plots',
-    #     input=output_from('apply_multicov'),
-    #     output='coverage/coverage_analysis_main.html')
-    #     .follows('apply_multicov'))
+    #     task_func=stages.apply_multicov,
+    #     name='apply_multicov',
+    #     input=output_from('primary_bam'),
+    #     # filter=suffix('.primary.bam'),
+    #     output='coverage/all.multicov.txt')
+    #     .follows('index_bam'))
 
     return pipeline
