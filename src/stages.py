@@ -60,6 +60,7 @@ class Stages(object):
         self.hrfile = self.get_options('hrfile')
         self.other_vep = self.get_options('other_vep')
         self.snpeff_path = self.get_options('snpeff_path')
+        self.gatk_bed = self.get_options('gatk_bed')
 
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
@@ -192,9 +193,9 @@ class Stages(object):
     def combine_gvcf_gatk(self, vcf_files_in, vcf_out):
         '''Combine G.VCF files for all samples using GATK'''
         g_vcf_files = ' '.join(['--variant ' + vcf for vcf in vcf_files_in])
-        gatk_args = "-T CombineGVCFs -R {reference} " \
+        gatk_args = "-T CombineGVCFs -R {reference} -L {gatk_bed}" \
                     "--disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "{g_vcf_files} -o {vcf_out}".format(reference=self.reference,
+                    "{g_vcf_files} -o {vcf_out}".format(reference=self.reference, gatk_bed=self.gatk_bed,
                                                         g_vcf_files=g_vcf_files, vcf_out=vcf_out)
         self.run_gatk('combine_gvcf_gatk', gatk_args)
 
@@ -203,9 +204,9 @@ class Stages(object):
         cores = self.get_stage_options('genotype_gvcf_gatk', 'cores')
         gatk_args = "-T GenotypeGVCFs -R {reference} " \
                     "--disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "--dbsnp {dbsnp} " \
+                    "--dbsnp {dbsnp} -L {gatk_bed} " \
                     "--num_threads {cores} --variant {combined_vcf} --out {vcf_out}" \
-                    .format(reference=self.reference, dbsnp=self.dbsnp_hg19,
+                    .format(reference=self.reference, dbsnp=self.dbsnp_hg19, gatk_bed=self.gatk_bed,
                             cores=cores, combined_vcf=combined_vcf_in, vcf_out=vcf_out)
         self.run_gatk('genotype_gvcf_gatk', gatk_args)
 
