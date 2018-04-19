@@ -124,3 +124,36 @@ Follow instructions below to prepare the intervals files for the pipeline. (We a
 * Primer coordinates file. (primer.bedpe) This file is used to clip primer sequences from the alignments. awk ' BEGIN{FS="\t";OFS="\t"}; { print $1,$7,$8,$1,$12,$11} ' rover.txt > primer.bedpe
 * Create intervals for GATK variant calling
 `cut -f1,2,3 rover.txt | bedtools slop -i - -b 10 -g hg19.genome | bedtools merge -i - > rover.gatk.bed`
+=======
+#### Installation example on Melbourne Bioinformatics clusters
+
+```
+module load Python/2.7.10-vlsci_intel-2015.08.25
+export DRMAA_LIBRARY_PATH=/usr/local/slurm_drmaa/1.0.7-GCC/lib/libdrmaa.so
+virtualenv --system-site-packages venv
+source venv/bin/activate
+pip install -U https://github.com/khalidm/undr_rover/archive/master.zip
+pip install -U https://github.com/khalidm/hiplexpipe/archive/master.zip
+hiplexpipe --config pipeline.config --use_threads --log_file pipeline.log --jobs 10 --verbose 3 --just_print
+```
+
+## Getting started
+
+#### Step 1. Preparing the target region files
+
+You should have two target interval files for every Hi-Plex experiment.
+1. rover.txt - this contains the amplicon regions and primer sequences.
+2. idt.txt - this file contains the primer sequences and their names matching the names in the above rover.txt file.
+
+Follow instructions below to prepare the intervals files for the pipeline. (We are working on a tool to automate this task).
+
+1. Main rover bed file. (rover.bed)
+    This file is used to calculate alignment and coverage statistics.
+    cut -f1,2,3,4,5 rover.txt > rover.bed
+    or
+    awk ' BEGIN{FS="\t";OFS="\t"}; { print $1,int($2+($3-$2)/2),int($3-($3-$2)/2),$4,$5} ' rover.txt > rover.bed
+2. !Interval file. (rover.interval_list) - not required as the input bam is now clipped.
+    java -jar picard.jar BedToIntervalList I=rover.bed SD=<hg19.dict> -O=rover.interval_list
+3. Primer coordinates file. (primer.bedpe)
+    This file is used to clip primer sequences from the alignments.
+    awk ' BEGIN{FS="\t";OFS="\t"}; { print $1,$7,$8,$1,$12,$11} ' rover.txt > primer.bedpe
