@@ -12,7 +12,7 @@ from runner import run_stage
 import os
 
 # PICARD_JAR = '$PICARD_HOME/lib/picard-1.69.jar'
-PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/Picard/picard-tools-2.8.3/picard.jar'
+PICARD_JAR = '/usr/local/easybuild/software/picard/2.3.0/picard.jar'
 SNPEFF_JAR = '/usr/local/easybuild/software/snpEff/4.1d-Java-1.7.0_80/snpEff.jar'
 
 GATK_JAR = '$GATK_HOME/GenomeAnalysisTK.jar'
@@ -45,18 +45,19 @@ class Stages(object):
         self.vt_path = self.get_options('vt_path')
         self.coord_file = self.get_options('coord_file')
         self.target_bed = self.get_options('target_bed')
-        self.interval_file = self.get_options('interval_file')
+        # self.interval_file = self.get_options('interval_file')
         self.primer_file = self.get_options('primer_file')
         self.primer_bedpe_file = self.get_options('primer_bedpe_file')
         self.proportionthresh = self.get_options('proportionthresh')
         self.absthresh = self.get_options('absthresh')
         self.maxvariants = self.get_options('maxvariants')
-        self.fragment_bed = self.get_options('fragment_bed')
+        # self.fragment_bed = self.get_options('fragment_bed')
         self.annolua = self.get_options('annolua')
         self.anno = self.get_options('anno')
         self.hrfile = self.get_options('hrfile')
         self.other_vep = self.get_options('other_vep')
         self.snpeff_path = self.get_options('snpeff_path')
+        self.gatk_bed = self.get_options('gatk_bed')
 
     def run_picard(self, stage, args):
         mem = int(self.state.config.get_stage_options(stage, 'mem'))
@@ -118,7 +119,7 @@ class Stages(object):
                         coord_file=self.coord_file, primer_file=self.primer_file,
                         reference=self.reference,
                         vcf_output=vcf_output,
-                        coverdir=self.coverdir,
+                        #coverdir=self.coverdir,
                         proportionthresh=self.proportionthresh,
                         absthresh=self.absthresh,
                         maxvariants=self.maxvariants,
@@ -175,16 +176,17 @@ class Stages(object):
                     "-A SampleList -A SpanningDeletions " \
                     "-A StrandBiasBySample -A StrandOddsRatio " \
                     "-A TandemRepeatAnnotator -A VariantType " \
-                    "-I {bam} -L {interval_list} -o {out}".format(reference=self.reference,
-                                                                  bam=bam_in, interval_list=self.interval_file, out=vcf_out)
+                    "--dontUseSoftClippedBases " \
+                    "-I {bam} -o {out}".format(reference=self.reference,
+                                                                  bam=bam_in, out=vcf_out)
         self.run_gatk('call_haplotypecaller_gatk', gatk_args)
 
     def combine_gvcf_gatk(self, vcf_files_in, vcf_out):
         '''Combine G.VCF files for all samples using GATK'''
         g_vcf_files = ' '.join(['--variant ' + vcf for vcf in vcf_files_in])
-        gatk_args = "-T CombineGVCFs -R {reference} " \
+        gatk_args = "-T CombineGVCFs -R {reference} -L {gatk_bed} " \
                     "--disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "{g_vcf_files} -o {vcf_out}".format(reference=self.reference,
+                    "{g_vcf_files} -o {vcf_out}".format(reference=self.reference, gatk_bed=self.gatk_bed,
                                                         g_vcf_files=g_vcf_files, vcf_out=vcf_out)
         self.run_gatk('combine_gvcf_gatk', gatk_args)
 
@@ -193,9 +195,9 @@ class Stages(object):
         cores = self.get_stage_options('genotype_gvcf_gatk', 'cores')
         gatk_args = "-T GenotypeGVCFs -R {reference} " \
                     "--disable_auto_index_creation_and_locking_when_reading_rods " \
-                    "--dbsnp {dbsnp} " \
+                    "--dbsnp {dbsnp} -L {gatk_bed} " \
                     "--num_threads {cores} --variant {combined_vcf} --out {vcf_out}" \
-                    .format(reference=self.reference, dbsnp=self.dbsnp_hg19,
+                    .format(reference=self.reference, dbsnp=self.dbsnp_hg19, gatk_bed=self.gatk_bed,
                             cores=cores, combined_vcf=combined_vcf_in, vcf_out=vcf_out)
         self.run_gatk('genotype_gvcf_gatk', gatk_args)
 
@@ -318,15 +320,15 @@ class Stages(object):
     ###########
 
     # coverage picard
-    def target_coverage(self, bam_in, coverage_out):
-        '''Calculate coverage using Picard'''
-        safe_make_dir('coverage')
-        picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
-                      'R={reference} BAIT_INTERVALS={interval_file} ' \
-                      'TARGET_INTERVALS={interval_file}'.format(
-                          bam_in=bam_in, coverage_out=coverage_out,
-                          reference=self.reference, interval_file=self.interval_file)
-        self.run_picard('target_coverage', picard_args)
+    # def target_coverage(self, bam_in, coverage_out):
+    #     '''Calculate coverage using Picard'''
+    #     safe_make_dir('coverage')
+    #     picard_args = 'CollectHsMetrics INPUT={bam_in} OUTPUT={coverage_out} ' \
+    #                   'R={reference} BAIT_INTERVALS={interval_file} ' \
+    #                   'TARGET_INTERVALS={interval_file}'.format(
+    #                       bam_in=bam_in, coverage_out=coverage_out,
+    #                       reference=self.reference, interval_file=self.interval_file)
+    #     self.run_picard('target_coverage', picard_args)
 
     # coverage bam
     def target_coverage_bamutil(self, bam_in, coverage_out):
@@ -336,11 +338,11 @@ class Stages(object):
         run_stage(self.state, 'target_coverage_bamutil', command)
 
     # coverage bam interval
-    def target_coverage_bamutil_interval(self, bam_in, coverage_out):
-        '''Calculate target coverage using bamutil'''
-        command = 'bam stats --basic --in {bam_in} --regionList {fragment_bed} &> {coverage_out}'.format(
-                          bam_in=bam_in, fragment_bed = self.fragment_bed, coverage_out=coverage_out)
-        run_stage(self.state, 'target_coverage_bamutil_interval', command)
+    # def target_coverage_bamutil_interval(self, bam_in, coverage_out):
+    #     '''Calculate target coverage using bamutil'''
+    #     command = 'bam stats --basic --in {bam_in} --regionList {fragment_bed} &> {coverage_out}'.format(
+    #                       bam_in=bam_in, fragment_bed = self.fragment_bed, coverage_out=coverage_out)
+    #     run_stage(self.state, 'target_coverage_bamutil_interval', command)
 
     # multicov
     def apply_multicov(self, bam_in, multicov):

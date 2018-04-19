@@ -223,16 +223,7 @@ def make_pipeline(state):
         filter=suffix('.vcf.gz'),
         output='.vcf.gz.tbi')
 
-    # # Apply HomopolymerRun
-    # (pipeline.transform(
-    #     task_func=stages.apply_homopolymer_ann,
-    #     name='apply_homopolymer_ann',
-    #     input=output_from('apply_snpeff_ur'),
-    #     filter=suffix('.vep.anno.snpeff.vcf.gz'),
-    #     output='.annotated.vcf')
-    #     .follows('apply_tabix'))
-
-    # # Apply summarize multi coverage
+    # Apply summarize multi coverage
     # (pipeline.merge(
     #     task_func=stages.apply_multicov,
     #     name='apply_multicov',
@@ -240,21 +231,5 @@ def make_pipeline(state):
     #     # filter=suffix('.primary.bam'),
     #     output='coverage/all.multicov.txt')
     #     .follows('index_bam'))
-
-    # Apply summarize picard coverage
-    # (pipeline.merge(
-    #     task_func=stages.apply_summarize_picard,
-    #     name='apply_summarize_picard',
-    #     input=output_from('target_coverage'),
-    #     output='coverage/all.hsmetrics.txt')
-    #     .follows('target_coverage'))
-
-    # # Apply summarize multicov coverage plots
-    # (pipeline.merge(
-    #     task_func=stages.apply_multicov_plots,
-    #     name='apply_multicov_plots',
-    #     input=output_from('apply_multicov'),
-    #     output='coverage/coverage_analysis_main.html')
-    #     .follows('apply_multicov'))
 
     return pipeline
