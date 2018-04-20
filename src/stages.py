@@ -421,9 +421,9 @@ class Stages(object):
         '''Apply VEP'''
         vcf_in = inputs
         cores = self.get_stage_options('apply_vep', 'cores')
-        vep_command = "{vep_path}/variant_effect_predictor.pl --cache --refseq --offline {other_vep} --fasta {reference} " \
+        vep_command = "{vep_path} --cache --refseq --offline {other_vep} --fasta {reference} " \
                     "-i {vcf_in} --sift b --polyphen b --symbol --numbers --biotype --total_length --hgvs " \
-                    "--format vcf -o {vcf_vep} --force_overwrite --vcf " \
+                    "--format vcf -o {vcf_vep} --force_overwrite --vcf --exclude_predicted " \
                     "--fields Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT," \
                     "Protein_position,BIOTYPE,HGVSc,HGVSp,cDNA_position,CDS_position,HGVSc,HGVSp,cDNA_position,CDS_position,PICK " \
                     "--fork {threads} --flag_pick".format(
