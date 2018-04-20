@@ -11,8 +11,6 @@ from utils import safe_make_dir
 from runner import run_stage
 import os
 
-# PICARD_JAR = '$PICARD_HOME/lib/picard-1.69.jar'
-# PICARD_JAR = '/vlsci/VR0002/kmahmood/Programs/Picard/picard-tools-2.8.3/picard.jar'
 PICARD_JAR = '/usr/local/easybuild/software/picard/2.3.0/picard.jar'
 SNPEFF_JAR = '/usr/local/easybuild/software/snpEff/4.1d-Java-1.7.0_80/snpEff.jar'
 
