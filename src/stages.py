@@ -437,7 +437,7 @@ class Stages(object):
             "--fork {threads} " \
             "--flag_pick " \
             "--plugin MaxEntScan,/vlsci/UOM0040/shared/km/programs/ensembl-vep/data/MaxEntScan/ " \
-            "--plugin GeneSplicer,$GENE_SPLICER_PATH/bin/linux/genesplicer,$GENE_SPLICER_PATH/human,context=100,tmpdir=/scratch/UOM0040/temp/".format(
+            "--plugin GeneSplicer,$GENE_SPLICER_PATH/bin/linux/genesplicer,$GENE_SPLICER_PATH/human,context=100,tmpdir=$TMPDIR".format(
                     reference=self.reference, vep_path=self.vep_path, vcf_in=vcf_in, vcf_vep=vcf_out, other_vep=self.other_vep, threads=cores)
         run_stage(self.state, 'apply_vep', vep_command)
 
