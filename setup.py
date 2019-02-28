@@ -18,6 +18,6 @@ setup(
     install_requires=[
         "ruffus == 2.6.3",
         "drmaa == 0.7.6",
-        "PyYAML == 3.11"
+        "PyYAML>=4.2b1"
     ],
 )
