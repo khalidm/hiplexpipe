@@ -104,9 +104,9 @@ def make_pipeline(state):
         task_func=stages.clip_bam,
         name='clip_bam',
         input=output_from('primary_bam'),
-        # filter=suffix('.primary.bam'),
-        filter=formatter('.+/(?P<sample>[a-zA-Z0-9-_]+).primary.bam'),
-        extras=['{sample[0]}'],
+        filter=suffix('.primary.bam'),
+        #filter=formatter('.+/(?P<sample>[a-zA-Z0-9-_]+).primary.bam'),
+        #extras=['{sample[0]}'],
         output='.primary.primerclipped.bam')
         .follows('index_bam'))
 
