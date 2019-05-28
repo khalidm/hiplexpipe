@@ -143,7 +143,7 @@ class Stages(object):
     def clip_bam(self, bam_in, sorted_bam_out):
         '''Clip the BAM file using Bamclipper'''
         bamclipper_args = '{bamclipper} -b {bam_in} -p {primer_bedpe_file} -n 1'.format(
-                          sample_id=sample_id, bamclipper=self.bamclipper, bam_in=bam_in, primer_bedpe_file=self.primer_bedpe_file)
+                          bamclipper=self.bamclipper, bam_in=bam_in, primer_bedpe_file=self.primer_bedpe_file)
         run_stage(self.state, 'clip_bam', bamclipper_args)
 
     def sort_bam_picard(self, bam_in, sorted_bam_out):
