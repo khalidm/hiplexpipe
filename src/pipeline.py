@@ -95,7 +95,7 @@ def make_pipeline(state):
         task_func=stages.clip_bam,
         name='clip_bam',
         input=output_from('primary_bam'),
-        filter=suffix('(?P<sample>[a-zA-Z0-9-_]+).primary.bam')
+        filter=suffix('(?P<sample>[a-zA-Z0-9-_]+).primary.bam'),
         #filter=suffix('.primary.bam'),
         output='alignments/{sample[0]}/{sample[0]}.primary.primerclipped.bam')
         .follows('index_bam'))
