@@ -252,39 +252,39 @@ def make_pipeline(state):
     # -------- VEP ----------
     ###### GATK VARIANT CALLING ######
 
-    # Concatenate undr_rover vcf files
-    pipeline.merge(
-        task_func=stages.apply_cat_vcf,
-        name='apply_cat_vcf',
-        input=output_from('apply_undr_rover'),
-        output='variants/undr_rover/ur.vcf.gz')
-
-    # Apple VEP on concatenated undr_rover vcf file
-    (pipeline.transform(
-        task_func=stages.apply_vep,
-        name='apply_vep_ur',
-        input=output_from('apply_cat_vcf'),
-        filter=suffix('.vcf.gz'),
-        output='.vep.vcf')
-        .follows('apply_cat_vcf'))
-
-    # Apply vcfanno on concatenated/vep undr_rover vcf file
-    (pipeline.transform(
-        task_func=stages.apply_vcfanno,
-        name='apply_vcfanno_ur',
-        input=output_from('apply_vep_ur'),
-        filter=suffix('.vep.vcf'),
-        output='.vep.anno.vcf')
-        .follows('apply_vep_ur'))
-
-    # Apply snpeff
-    (pipeline.transform(
-        task_func=stages.apply_snpeff,
-        name='apply_snpeff_ur',
-        input=output_from('apply_vcfanno_ur'),
-        filter=suffix('.vep.anno.vcf'),
-        output='.vep.anno.snpeff.vcf.gz')
-        .follows('apply_vcfanno_ur'))
+    # # Concatenate undr_rover vcf files
+    # pipeline.merge(
+    #     task_func=stages.apply_cat_vcf,
+    #     name='apply_cat_vcf',
+    #     input=output_from('apply_undr_rover'),
+    #     output='variants/undr_rover/ur.vcf.gz')
+    #
+    # # Apple VEP on concatenated undr_rover vcf file
+    # (pipeline.transform(
+    #     task_func=stages.apply_vep,
+    #     name='apply_vep_ur',
+    #     input=output_from('apply_cat_vcf'),
+    #     filter=suffix('.vcf.gz'),
+    #     output='.vep.vcf')
+    #     .follows('apply_cat_vcf'))
+    #
+    # # Apply vcfanno on concatenated/vep undr_rover vcf file
+    # (pipeline.transform(
+    #     task_func=stages.apply_vcfanno,
+    #     name='apply_vcfanno_ur',
+    #     input=output_from('apply_vep_ur'),
+    #     filter=suffix('.vep.vcf'),
+    #     output='.vep.anno.vcf')
+    #     .follows('apply_vep_ur'))
+    #
+    # # Apply snpeff
+    # (pipeline.transform(
+    #     task_func=stages.apply_snpeff,
+    #     name='apply_snpeff_ur',
+    #     input=output_from('apply_vcfanno_ur'),
+    #     filter=suffix('.vep.anno.vcf'),
+    #     output='.vep.anno.snpeff.vcf.gz')
+    #     .follows('apply_vcfanno_ur'))
 
     # Apply tabix
     pipeline.transform(
