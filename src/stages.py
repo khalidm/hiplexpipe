@@ -449,7 +449,7 @@ class Stages(object):
             '''Apply VEP'''
             vcf_in = inputs
             cores = self.get_stage_options('apply_vep', 'cores')
-            vep_command = "{vep_path}/vep " \
+            vep_command = "PERL5LIB="";{vep_path}/vep " \
                 "--cache " \
                 "--refseq " \
                 "--offline " \
