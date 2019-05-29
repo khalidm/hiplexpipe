@@ -62,6 +62,7 @@ class Stages(object):
         self.gatk_bed = self.get_options('gatk_bed')
         self.MAXENTSCAN_DB = self.get_options('MAXENTSCAN_DB')
         self.GENE_SPLICER_PATH = self.get_options('GENE_SPLICER_PATH')
+        self.vcfanno = self.get_options('vcfanno')
 
         # self.GBR_mergeGvcf = self.get_options('GBR_mergeGvcf')
         # self.FIN_mergeGvcf = self.get_options('FIN_mergeGvcf')
@@ -523,8 +524,8 @@ class Stages(object):
         vcf_in = inputs
         #cores = self.get_stage_options('apply_snpeff', 'cores')
         # anno_command = "./vcfanno_linux64 -lua {annolua} {anno} {vcf_in} > {vcf_out}".format(
-        anno_command = "vcfanno -lua {annolua} {anno} {vcf_in} > {vcf_out}".format(
-                    annolua=self.annolua, anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
+        anno_command = "{vcfanno} -lua {annolua} {anno} {vcf_in} > {vcf_out}".format(
+                    vcfanno=self.vcfanno, annolua=self.annolua, anno=self.anno, vcf_in=vcf_in, vcf_out=vcf_out)
         run_stage(self.state, 'apply_vcfanno', anno_command)
 
     def apply_cat_vcf(self, inputs, vcf_out):
