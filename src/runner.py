@@ -49,8 +49,9 @@ def run_stage(state, stage, command):
     job_name = pipeline_id + '_' + stage
 
     # Generate a "module load" command for each required module
+    old_spartan = "source /usr/local/module/spartan_old.sh"
     module_loads = '\n'.join(['module load ' + module for module in modules])
-    cluster_command = '\n'.join([module_loads, command])
+    cluster_command = '\n'.join([old_spartan, module_loads, command])
 
     # Specify job-specific options for SLURM
     job_options = '--nodes=1 --ntasks-per-node={cores} --ntasks={cores} --time={time} --mem={mem} --partition={queue} --account={account}' \
